@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LEt-8I-gLv">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Configuração-->
+        <scene sceneID="Yg2-kQ-Bao">
+            <objects>
+                <viewController storyboardIdentifier="ConfigViewController" id="IdI-7H-eWj" customClass="ConfigViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ehe-O4-5m5">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="IP" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VlV-hG-RuE">
+                                <rect key="frame" x="16" y="44" width="343" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                                <connections>
+                                    <action selector="txtIPValueChanged:" destination="IdI-7H-eWj" eventType="editingDidEnd" id="kDJ-B8-EdK"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Porta" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dO1-sS-8r9">
+                                <rect key="frame" x="16" y="90" width="343" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
+                                <connections>
+                                    <action selector="txtPortValueChanged:" destination="IdI-7H-eWj" eventType="editingDidEnd" id="bn6-g0-Vda"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="TCS-Jt-rq9" firstAttribute="trailing" secondItem="dO1-sS-8r9" secondAttribute="trailing" constant="16" id="4Nr-RB-ffy"/>
+                            <constraint firstItem="VlV-hG-RuE" firstAttribute="top" secondItem="TCS-Jt-rq9" secondAttribute="top" constant="24" id="AOd-0V-tBf"/>
+                            <constraint firstItem="VlV-hG-RuE" firstAttribute="centerX" secondItem="TCS-Jt-rq9" secondAttribute="centerX" id="RJP-Cn-fWl"/>
+                            <constraint firstItem="dO1-sS-8r9" firstAttribute="leading" secondItem="TCS-Jt-rq9" secondAttribute="leading" constant="16" id="XJc-Zr-mmT"/>
+                            <constraint firstItem="dO1-sS-8r9" firstAttribute="top" secondItem="VlV-hG-RuE" secondAttribute="bottom" constant="16" id="l82-Yy-8hj"/>
+                            <constraint firstItem="TCS-Jt-rq9" firstAttribute="trailing" secondItem="VlV-hG-RuE" secondAttribute="trailing" constant="16" id="rwv-1I-etT"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="TCS-Jt-rq9"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Configuração" id="57p-fe-6Xq"/>
+                    <connections>
+                        <outlet property="txtIP" destination="VlV-hG-RuE" id="aXu-0R-OfI"/>
+                        <outlet property="txtPorta" destination="dO1-sS-8r9" id="tLM-qP-8z1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fZy-x0-U69" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="984.79999999999995" y="529.38530734632684"/>
+        </scene>
+        <!--Artigos-->
+        <scene sceneID="Hi8-Oi-LuJ">
+            <objects>
+                <viewController storyboardIdentifier="ArtigosViewController" id="O7o-Ec-NYc" customClass="ArtigosViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="p7D-9Q-7ts">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" barStyle="black" largeTitles="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sDF-VC-Cvd">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="barTintColor" red="0.31686639707693887" green="0.6575457372159077" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="22"/>
+                                </textAttributes>
+                                <textAttributes key="largeTitleTextAttributes">
+                                    <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="26"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem title="Client_Name" id="AJB-hy-VF8"/>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Min-EG-CG1">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="0.31686639709999997" green="0.65754573719999998" blue="1" alpha="0.94999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="separatorColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="customCell" rowHeight="100" id="6er-Gw-bCO" customClass="CustomTableViewCell" customModule="DibalTesteIOS" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="100"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6er-Gw-bCO" id="VcZ-Ii-tPB">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bPa-Fh-Pn9">
+                                                    <rect key="frame" x="5" y="5" width="365" height="90"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CHQ-Wo-M31">
+                                                            <rect key="frame" x="10" y="10" width="110" height="70"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pIN-wV-l3H">
+                                                            <rect key="frame" x="128" y="5" width="232" height="80"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </view>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="bPa-Fh-Pn9" secondAttribute="trailing" constant="5" id="3mG-EU-656"/>
+                                                <constraint firstAttribute="bottom" secondItem="bPa-Fh-Pn9" secondAttribute="bottom" constant="5" id="63n-zy-vpO"/>
+                                                <constraint firstItem="bPa-Fh-Pn9" firstAttribute="top" secondItem="VcZ-Ii-tPB" secondAttribute="top" constant="5" id="8cr-0p-HFp"/>
+                                                <constraint firstItem="bPa-Fh-Pn9" firstAttribute="leading" secondItem="VcZ-Ii-tPB" secondAttribute="leading" constant="5" id="GRA-G8-N4F"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <connections>
+                                            <outlet property="cellView" destination="bPa-Fh-Pn9" id="ZOx-2D-Jou"/>
+                                            <outlet property="lblCodigo" destination="CHQ-Wo-M31" id="g4V-bK-E0M"/>
+                                            <outlet property="lblDenominacao" destination="pIN-wV-l3H" id="cIp-3K-OKC"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fdg-Cb-UxB">
+                                <rect key="frame" x="299" y="542" width="60" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.60319388780000005" blue="0.083098821650000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" backgroundImage="add">
+                                    <color key="titleShadowColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="clickAddArtigo:" destination="O7o-Ec-NYc" eventType="touchUpInside" id="Mh3-f8-dkm"/>
+                                    <segue destination="sMH-Mg-cb8" kind="show" identifier="DetalheArtigoSege" id="N1r-XU-0FS"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.31686639707693887" green="0.6575457372159077" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="vCM-GA-TnM"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Artigos" id="DPv-2g-ej6"/>
+                    <connections>
+                        <outlet property="NovoArtigoButton" destination="fdg-Cb-UxB" id="koN-0v-aCA"/>
+                        <outlet property="lblHeader" destination="AJB-hy-VF8" id="A8E-U5-D2i"/>
+                        <outlet property="tableView" destination="Min-EG-CG1" id="1ya-gG-fJr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PbB-Rb-fbw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="984.79999999999995" y="-134.48275862068968"/>
+        </scene>
+        <!--Textos-->
+        <scene sceneID="HdU-Vc-LvK">
+            <objects>
+                <viewController id="o3n-ak-LnO" customClass="DetalheArtigoViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0VH-Dz-Z2h">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eih-WM-OnS">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem title="Artigo" id="I3k-gW-dym">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancelar" id="J1o-LE-eDN">
+                                            <connections>
+                                                <action selector="cancelNovoArtigo:" destination="o3n-ak-LnO" id="66o-3x-3Qz"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Guardar" id="5gI-W6-qYl">
+                                            <connections>
+                                                <action selector="saveArtigo:" destination="o3n-ak-LnO" id="vHv-61-zCo"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="3XB-Kk-OJU"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Textos" id="YSC-YX-SCO"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aL4-nR-i7z" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3209" y="-134"/>
+        </scene>
+        <!--Códigos de Barra-->
+        <scene sceneID="RUQ-y3-4NP">
+            <objects>
+                <viewController id="lRu-Nj-e16" customClass="DetalheArtigoViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="33u-uI-3dI">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VBr-Z3-5OJ">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem title="Artigo" id="XeS-fO-XaP">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancelar" id="AWT-Rt-vSO">
+                                            <connections>
+                                                <action selector="cancelNovoArtigo:" destination="lRu-Nj-e16" id="t6m-8G-eUw"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Guardar" id="ePR-Wm-S7n">
+                                            <connections>
+                                                <action selector="saveArtigo:" destination="lRu-Nj-e16" id="AD2-ux-IsG"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="LAP-4x-p9n"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Códigos de Barra" id="PWR-PL-SBE"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IjE-Xs-DQY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3812" y="-134"/>
+        </scene>
+        <!--Automatismos-->
+        <scene sceneID="bxs-bw-FvF">
+            <objects>
+                <viewController id="VTq-sZ-28V" customClass="DetalheArtigoViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ypn-d9-ggH">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="U6P-ll-Gmj">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem title="Artigo" id="ah9-NS-hfe">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancelar" id="9W2-4Y-eDv">
+                                            <connections>
+                                                <action selector="cancelNovoArtigo:" destination="VTq-sZ-28V" id="JtG-Gd-6g3"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Guardar" id="h7e-D3-uSL">
+                                            <connections>
+                                                <action selector="saveArtigo:" destination="VTq-sZ-28V" id="u8V-Pk-Jid"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="xnk-b0-226"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Automatismos" id="j5r-jz-bcT"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3LC-sB-Yk4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4406" y="-133"/>
+        </scene>
+        <!--Outros-->
+        <scene sceneID="gGD-R1-1xG">
+            <objects>
+                <viewController id="D0G-WP-eMg" customClass="DetalheArtigoViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="px1-yR-Iyi">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mDE-Iz-d5b">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem title="Artigo" id="1ks-vI-fCC">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancelar" id="VDt-tR-4kG">
+                                            <connections>
+                                                <action selector="cancelNovoArtigo:" destination="D0G-WP-eMg" id="9jl-ah-6nf"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Guardar" id="xWK-iY-Njd">
+                                            <connections>
+                                                <action selector="saveArtigo:" destination="D0G-WP-eMg" id="LQv-aI-HQ1"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="fyR-Ut-epQ"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Outros" id="AE8-ra-sKl"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jY8-eX-eEg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5001" y="-131"/>
+        </scene>
+        <!--Dados-->
+        <scene sceneID="P1o-qT-VMT">
+            <objects>
+                <viewController id="vy0-Qa-W2m" customClass="DetalheArtigoViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ipB-bS-hYL">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wDc-WC-1eq">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem title="Artigo" id="rd1-Yg-x1X">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancelar" id="Egx-Cu-3d7">
+                                            <connections>
+                                                <action selector="cancelNovoArtigo:" destination="vy0-Qa-W2m" id="EEu-64-uSn"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Guardar" id="Wyd-yJ-Wza">
+                                            <connections>
+                                                <action selector="saveArtigo:" destination="vy0-Qa-W2m" id="AdV-zh-HCX"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" pagingEnabled="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8Ui-gK-hHb">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="fieldsCell" id="Ohq-Ys-KEM" customClass="FieldCellTableViewCell" customModule="DibalTesteIOS" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ohq-Ys-KEM" id="0oN-TQ-7Gt">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ZyL-FI-STm" customClass="UIFloatLabelTextField">
+                                                    <rect key="frame" x="5" y="5" width="365" height="34"/>
+                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ZyL-FI-STm" firstAttribute="leading" secondItem="0oN-TQ-7Gt" secondAttribute="leading" constant="5" id="OUc-St-yXf"/>
+                                                <constraint firstAttribute="bottom" secondItem="ZyL-FI-STm" secondAttribute="bottom" constant="5" id="TaU-vh-pVF"/>
+                                                <constraint firstItem="ZyL-FI-STm" firstAttribute="top" secondItem="0oN-TQ-7Gt" secondAttribute="top" constant="5" id="lIH-9V-a2x"/>
+                                                <constraint firstAttribute="trailing" secondItem="ZyL-FI-STm" secondAttribute="trailing" constant="5" id="zF6-td-JWS"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="textView" destination="ZyL-FI-STm" id="Lxj-FW-uSJ"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="JC4-2I-zcX"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Dados" id="4f2-4R-Ufj"/>
+                    <connections>
+                        <outlet property="tableView" destination="8Ui-gK-hHb" id="EEj-4q-yLZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yFv-8r-YoS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2608.8000000000002" y="-134.48275862068968"/>
+        </scene>
+        <!--CustomTB View Controller-->
+        <scene sceneID="lrr-nm-3LM">
+            <objects>
+                <tabBarController id="sMH-Mg-cb8" customClass="CustomTBViewController" customModule="DibalTesteIOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mcl-om-ou8">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="vy0-Qa-W2m" kind="relationship" relationship="viewControllers" id="m7R-8V-e2H"/>
+                        <segue destination="o3n-ak-LnO" kind="relationship" relationship="viewControllers" id="nyu-Zl-5OQ"/>
+                        <segue destination="lRu-Nj-e16" kind="relationship" relationship="viewControllers" id="kcM-bC-9Zd"/>
+                        <segue destination="VTq-sZ-28V" kind="relationship" relationship="viewControllers" id="71J-ZY-EvA"/>
+                        <segue destination="D0G-WP-eMg" kind="relationship" relationship="viewControllers" id="quc-Fo-lkb"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="w8r-wX-dpf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1762" y="-134"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="Gbu-ER-NsC">
+            <objects>
+                <tabBarController id="LEt-8I-gLv" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="avA-LX-beJ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="O7o-Ec-NYc" kind="relationship" relationship="viewControllers" id="s3c-Uh-ABd"/>
+                        <segue destination="IdI-7H-eWj" kind="relationship" relationship="viewControllers" id="UGL-5m-xRw"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BtL-bf-pM1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="26" y="158"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="add" width="256" height="256"/>
+    </resources>
+</document>

@@ -1,0 +1,6 @@
+framework module Pods_DibalTesteIOS {
+  umbrella header "Pods-DibalTesteIOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
