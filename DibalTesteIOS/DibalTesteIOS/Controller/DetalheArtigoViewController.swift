@@ -11,19 +11,23 @@ import Firebase
 import FirebaseFirestore
 import SkyFloatingLabelTextField
 
-class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     var Firebase: FirebaseCom!
     var artigo = Artigo()
     
+    @IBOutlet weak var txtHeader: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      if Firebase.selectedArticle >= 0  {
+        if Firebase.selectedArticle >= 0  {
             artigo = Firebase.articles[Firebase.selectedArticle]
         }
-        
-        Firebase.getAllFields(tableView: tableView)
+        if Firebase.selectedArticle >= 0 {
+        txtHeader.title = artigo.campos["nome"]
+        }else{
+            txtHeader.title = "Novo Artigo"
+        }
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -36,6 +40,8 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
         
+  Firebase.getAllFields(tableView: tableView)
+        Firebase.setAllExpanded()
         
     }
     
@@ -62,6 +68,14 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         view.endEditing(true)
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+     dismissKeyboard()
+        
+        
+        return true
+    }
+    
     // MARK: Handle Navigation Bar Buttons
     
     @IBAction func cancelNovoArtigo(_ sender: Any) {
@@ -71,9 +85,19 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     @IBAction func saveArtigo(_ sender: Any) {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        if Int(artigo.campos["codigo"]!) != nil {
-            Firebase.uploadArtigo(artigo: artigo)
-            dismiss(animated: true, completion: nil)
+        let codigoArtInt = Int(artigo.campos["codigo"]!)
+        if codigoArtInt != nil, codigoArtInt! > 0, codigoArtInt! < 1000000 {
+            artigo.campos["codigo"] = "\(codigoArtInt!)"
+            if Firebase.selectedArticle == -1, Firebase.checkIfArticleExists(artigo: artigo) {
+                let alertController = UIAlertController(title: "Erro", message: "Esse artigo já existe! Não pode sobrepor artigos", preferredStyle: .alert)
+                let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alertController.addAction(OKAction)
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                
+                Firebase.uploadArtigo(artigo: artigo)
+                dismiss(animated: true, completion: nil)
+            }
         }else{
             let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .alert)
             let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -87,30 +111,71 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     @objc func textChanges(sender:SkyFloatingLabelTextField! ) {
         artigo.campos[sender.accessibilityIdentifier!] = sender.text
+
+        if sender.accessibilityIdentifier! == "nome", sender.text != "" {
+          txtHeader.title = sender.text
+        }else if Firebase.selectedArticle >= 0{
+            txtHeader.title = "Artigo"
+        }else if  artigo.campos["nome"] == ""{
+            txtHeader.title = "Novo Artigo"
+        }
+    }
+    
+    @objc func copyArticle(button: UIButton) {
+        let alertController = UIAlertController(title: "Copiar Artigo", message: "Por favor insira o codigo para onde deseja copiar o artigo!", preferredStyle: .alert)
+        
+        let OKAction = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
+        alertController.addAction(OKAction)
+        
+        alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {
+            alert -> Void in
+           let codigoArtigo = alertController.textFields![0] as UITextField
+            let codigoArtInt = Int(codigoArtigo.text!)
+            if codigoArtInt != nil, codigoArtInt! > 0, codigoArtInt! < 1000000   {
+                self.artigo.campos["codigo"] = codigoArtigo.text
+                self.Firebase.selectedArticle = -1
+                self.saveArtigo(self)
+            } else {
+                let errorAlert = UIAlertController(title: "Erro", message: "Por favor insira um valor válido!", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: {
+                    alert -> Void in
+                    self.present(alertController, animated: true, completion: nil)
+                }))
+                self.present(errorAlert, animated: true, completion: nil)
+            }
+            
+        }))
+        
+        alertController.addTextField(configurationHandler: { (textField) -> Void in
+            textField.placeholder = "Codigo do Artigo"
+            textField.textAlignment = .center
+        })
+            
+            self.present(alertController, animated: true, completion: nil)
     }
     
     /// Implementing a method on the UITextFieldDelegate protocol. This will notify us when something has changed on the textfield
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        if let text = textField.text {
-//            if let floatingLabelTextField = textField as? SkyFloatingLabelTextField {
-//
-//                if(text.count < 3 || !text.contains("@")) {
-//                    floatingLabelTextField.errorMessage = "Invalid email"
-//                }
-//                else {
-//                    // The error message will only disappear when we reset it to nil or empty string
-//                    floatingLabelTextField.errorMessage = ""
-//                }
-//            }
-//        }
-//        return true
-//    }
+    //    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    //        if let text = textField.text {
+    //            if let floatingLabelTextField = textField as? SkyFloatingLabelTextField {
+    //
+    //                if(text.count < 3 || !text.contains("@")) {
+    //                    floatingLabelTextField.errorMessage = "Invalid email"
+    //                }
+    //                else {
+    //                    // The error message will only disappear when we reset it to nil or empty string
+    //                    floatingLabelTextField.errorMessage = ""
+    //                }
+    //            }
+    //        }
+    //        return true
+    //    }
     
     // MARK: Handle Table View Creation and Editing
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "fieldsCell")!
-      
+        
         cell.removeAllSubViewOfType(type: SkyFloatingLabelTextField.self)
         
         let section = indexPath.section
@@ -124,21 +189,21 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
         textField.lineHeight = 1.0
         textField.lineColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
-
+        
         textField.accessibilityIdentifier = field.nome
         if Firebase.selectedArticle >= 0, Firebase.articles[Firebase.selectedArticle].campos[field.nome] != nil {
             textField.text = "\(Firebase.articles[Firebase.selectedArticle].campos[field.nome]!)"
         }else{
             textField.text = field.def
         }
-        if field.nome == "codigo", Firebase.selectedArticle != -1 {
-            textField.isEnabled = false
-            
-        }
+        
         textField.returnKeyType = UIReturnKeyType.done
+        
+        textField.delegate = self
+        
         textField.addTarget(self,
-                                action: #selector(textChanges),
-                                for: UIControlEvents.editingDidEnd
+                            action: #selector(textChanges),
+                            for: UIControlEvents.editingDidEnd
         )
         
         
@@ -151,6 +216,34 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         textField.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
         textField.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -5).isActive = true
         textField.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 2).isActive = true
+        
+        if field.nome == "codigo", Firebase.selectedArticle != -1 {
+            textField.isEnabled = false
+            
+                   textField.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -100).isActive = true
+            
+            let button = UIButton()
+            button.setTitle("Copiar", for: .normal)
+            button.setTitleColor(.black, for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+            button.addTarget(self, action: #selector(copyArticle), for: .touchUpInside)
+            
+            button.layer.cornerRadius = 5
+            button.layer.borderWidth = 1
+            button.layer.borderColor = UIColor.black.cgColor
+            
+            cell.addSubview(button)
+            
+            button.translatesAutoresizingMaskIntoConstraints = false
+            
+            button.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -5).isActive = true
+            button.topAnchor.constraint(equalTo: cell.topAnchor, constant: 10).isActive = true
+            button.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -10).isActive = true
+            button.widthAnchor.constraint(equalToConstant: 80).isActive = true
+            
+        }
+        
+ 
         
         return cell
         
@@ -188,7 +281,13 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
         let button = UIButton(type: .system)
         button.tag = section
-        button.setTitle("Fechar", for: .normal)
+
+        
+        
+                    button.setTitle("Fechar", for: .normal)
+     
+        
+
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         //button.frame = CGRect(x: self.view.frame.width - 65 , y: 5, width: 60, height: 30)

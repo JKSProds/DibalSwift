@@ -221,11 +221,12 @@
                     </view>
                     <connections>
                         <outlet property="tableView" destination="8Ui-gK-hHb" id="EEj-4q-yLZ"/>
+                        <outlet property="txtHeader" destination="rd1-Yg-x1X" id="sQS-wI-RZ0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yFv-8r-YoS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1854" y="-134"/>
+            <point key="canvasLocation" x="1853.5999999999999" y="-134.48275862068968"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="Gbu-ER-NsC">

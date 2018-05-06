@@ -27,6 +27,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         //load all articles
         Firebase.getAllArticles(tableView: tableView)
         
+        
         tableView.delegate = self
         tableView.dataSource = self
         

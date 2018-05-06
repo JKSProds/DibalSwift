@@ -30,6 +30,12 @@ class FirebaseCom {
         
     }
     
+    func setAllExpanded(){
+        for h in headers.indices {
+            headers[h].isExpanded = true
+        }
+    }
+    
     // MARK: Gets the client header
     func getClientHeader(to Label: UINavigationItem) {
         clientRef.addSnapshotListener { (document, error) in
@@ -78,6 +84,16 @@ class FirebaseCom {
                 }
             }
         }
+    }
+    
+    func checkIfArticleExists(artigo: Artigo) -> Bool {
+        for art in articles {
+            if art.campos["codigo"] == artigo.campos["codigo"] {
+                return true
+            }
+            
+        }
+        return false
     }
     
     
