@@ -16,20 +16,21 @@ class FirebaseCom {
     var articles = [Artigo]()
     var selectedArticle = -1
     var list: ListenerRegistration!
-    var headers = [ExpandableHeaders(isExpanded: true, Title: "Dados", Fields: []),
-                   ExpandableHeaders(isExpanded: true, Title: "Textos", Fields: []),
-                   ExpandableHeaders(isExpanded: true, Title: "Codigos de Barra", Fields: []),
-                   ExpandableHeaders(isExpanded: true, Title: "Automatismos", Fields: []),
-                   ExpandableHeaders(isExpanded: true, Title: "Outros", Fields: [])]
-    var novoArtigo = false
+    var headers = [ExpandableHeaders(isExpanded: true, Title: "Dados", Fields: [], Image: "dados.png"),
+                   ExpandableHeaders(isExpanded: true, Title: "Textos", Fields: [], Image: "textos.png"),
+                   ExpandableHeaders(isExpanded: true, Title: "Codigos de Barra", Fields: [], Image: "barcodes.png"),
+                   ExpandableHeaders(isExpanded: true, Title: "Automatismos", Fields: [], Image: "automatismos.png"),
+                   ExpandableHeaders(isExpanded: true, Title: "Outros", Fields: [], Image: "outros.png")]
+    
     
     
     init(clientID: String) {
         FirebaseApp.configure()
         clientRef = Firestore.firestore().collection("dibal").document("\(clientID)")
-
+        
     }
     
+    // MARK: Gets the client header
     func getClientHeader(to Label: UINavigationItem) {
         clientRef.addSnapshotListener { (document, error) in
             if let document = document {
@@ -42,6 +43,8 @@ class FirebaseCom {
             }
         }
     }
+    
+    // MARK: Handles the articles
     
     func getAllArticles(tableView: UITableView) {
         clientRef.collection("articles").order(by: "codigo").addSnapshotListener { querySnapshot, error in
@@ -57,7 +60,7 @@ class FirebaseCom {
                     if (diff.type == .added) {
                         //print(diff.newIndex)
                         self.articles.insert(art, at: Int(diff.newIndex))
-
+                        
                         let indexPath = IndexPath(row: Int(diff.newIndex), section: 0)
                         tableView.insertRows(at: [indexPath], with: .left)
                         //print (art.codigo)
@@ -77,13 +80,10 @@ class FirebaseCom {
         }
     }
     
-    func novoArtigo(campos: [String: Any]) {
-        clientRef.collection("articles").addDocument(data: campos)
-    }
     
     func removeArticle(at index: Int) {
         var docID: String = ""
-        clientRef.collection("articles").whereField("codigo", isEqualTo: articles[index].campos["codigo"] as! String)
+        clientRef.collection("articles").whereField("codigo", isEqualTo: articles[index].campos["codigo"]!)
             .getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -97,10 +97,11 @@ class FirebaseCom {
         }
     }
     
-    func uploadArtigo(at Index: Int) {
+    
+    func uploadArtigo(artigo: Artigo) {
         var docID: String = ""
-        if Index >= 0, (articles[Index].campos["codigo"] != nil) {
-            clientRef.collection("articles").whereField("codigo", isEqualTo: articles[Index].campos["codigo"] as! String)
+        if (artigo.campos["codigo"] != nil) {
+            clientRef.collection("articles").whereField("codigo", isEqualTo: artigo.campos["codigo"]!)
                 .getDocuments() { (querySnapshot, err) in
                     if let err = err {
                         print("Error getting documents: \(err)")
@@ -109,56 +110,87 @@ class FirebaseCom {
                             //print("\(document.documentID) => \(document.data())")
                             docID = "\(document.documentID)"
                             //print(self.codigo)
-                            self.clientRef.collection("articles").document(docID).setData(self.articles[Index].campos)
+                            self.clientRef.collection("articles").document(docID).setData(artigo.campos)
                         }
                     }
                     if docID == "" {
-                        self.clientRef.collection("articles").addDocument(data: self.articles[Index].campos)
-                        self.articles.remove(at: Index)
+                        self.clientRef.collection("articles").addDocument(data: artigo.campos)
+                        
                     }
             }
         }
     }
     
+    // MARK: Get all the fields into array
     
     func getAllFields(tableView: UITableView) {
-        for index in 0...headers.count - 1 {
-            headers[index].Fields.removeAll()
+        for h in headers.indices {
+            headers[h].Fields.removeAll()
         }
-        
-        list = clientRef.collection("fields").order(by: "id").addSnapshotListener { querySnapshot, error in
-            if let error = error {
-                print("Error fetching documents: \(error)")
-                return
-            }
-            querySnapshot?.documentChanges.forEach { diff in
-                //print("\(diff.document.documentID) => \(diff.document.data())")
-                if (diff.document.data()["id"]) != nil {
-                    
-                    let f = field(id: diff.document.data()["id"]! as! Int, id_master: diff.document.data()["id_master"]! as! Int, nome: "\(diff.document.data()["nome"]!)", descricao: "\(diff.document.data()["descricao"]!)", tipo: diff.document.data()["tipo"]! as! Int, visible: diff.document.data()["visible"]! as! Bool, def: "\(diff.document.data()["def"]!)")
-                    
-
-                    if (diff.type == .added) {
-                        //print(diff.newIndex)
+        clientRef.collection("fields").order(by: "id").addSnapshotListener { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                querySnapshot?.documentChanges.forEach { diff in
+                    if (diff.document.data()["id"]) != nil {
+                        let id_master = diff.document.data()["id_master"]! as! Int
+                        let id = self.headers[id_master].Fields.count
                         
-                        self.headers[f.id_master - 1].Fields.append(f)
-                        let indexPath = IndexPath(row: Int(self.headers[f.id_master - 1].Fields.count - 1), section: f.id_master - 1)
-                        tableView.insertRows(at: [indexPath], with: .left)
+                        let f = field(id_master: id_master, nome: "\(diff.document.data()["nome"]!)", descricao: "\(diff.document.data()["descricao"]!)", tipo: diff.document.data()["tipo"]! as! Int, visible: diff.document.data()["visible"]! as! Bool, def: "\(diff.document.data()["def"]!)")
+                        
+                        if (diff.type == .added) {
+                            self.headers[id_master].Fields.append(f)
+                            let indexPath = IndexPath(row: id, section: id_master)
+                            tableView.insertRows(at: [indexPath], with: .left)
+                        }
+                        if (diff.type == .modified) {
+                            let index = self.getIDbyNome(nome: f.nome)
+                            if (f.id_master != index.section) {
+                                
+                                self.headers[index.section].Fields.remove(at: index.row)
+                                //tableView.deleteRows(at: [index], with: .bottom)
+                                tableView.reloadData()
+                                
+                                if index.row >= self.headers[id_master].Fields.count {
+                                    let indexPath = IndexPath(row: self.headers[id_master].Fields.count, section: id_master)
+                                    self.headers[id_master].Fields.append(f)
+                                    tableView.insertRows(at: [indexPath], with: .left)
+                                }else{
+                                    let indexPath = IndexPath(row: index.row, section: id_master)
+                                    self.headers[id_master].Fields.insert(f, at: index.row)
+                                    tableView.insertRows(at: [indexPath], with: .left)
+                                }
+                                
+
+                            }else{
+                                self.headers[index.section].Fields[index.row] = f
+                                tableView.reloadData()
+                            }
+                        }
+                        if (diff.type == .removed) {
+                            let index = self.getIDbyNome(nome: f.nome)
+                            if  index.row >= 0{
+                                self.headers[index.section].Fields.remove(at: index.row)
+                                tableView.deleteRows(at: [index], with: .bottom)
+                            }
+                        }
                     }
-                    if (diff.type == .modified) {
-                        self.headers[f.id_master - 1].Fields.append(f)
-                        tableView.reloadData()
-                    }
-                    if (diff.type == .removed) {
-                        self.headers[f.id_master - 1].Fields.remove(at: Int(diff.oldIndex))
-                        let indexPath = IndexPath(row: Int(diff.oldIndex), section: f.id_master - 1)
-                        tableView.deleteRows(at: [indexPath], with: .bottom)
-                    }
-                    
                 }
             }
         }
     }
     
+    func getIDbyNome(nome: String) -> IndexPath {
+        var index = IndexPath()
+        for h in self.headers.indices {
+            for f in self.headers[h].Fields.indices {
+                if self.headers[h].Fields[f].nome == nome {
+                   index = IndexPath(row: f, section: h)
+                }
+            }
+        }
+        return index
+    }
     
 }
+

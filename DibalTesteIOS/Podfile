@@ -9,6 +9,7 @@ target 'DibalTesteIOS' do
 	pod 'Firebase/Core'
 	pod 'Firebase/Firestore'
 	pod 'UIFloatLabelTextField'
+	pod 'SkyFloatingLabelTextField'
 	pod 'SwiftSocket'
 
   # Pods for DibalTesteIOS

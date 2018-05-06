@@ -10,7 +10,7 @@ import Foundation
 
 struct Artigo {
     
-    var campos: [String: Any] = [
+    var campos: [String: String] = [
         "codigo": "",
         "nome": "",
         "tipo": "",
@@ -24,7 +24,9 @@ struct Artigo {
     
     
     init (campos: [String: Any]) {
-       self.campos = campos
+        for (key, value) in campos {
+            if let value = value as? String { self.campos[key] = value }
+        }
 
     }
     

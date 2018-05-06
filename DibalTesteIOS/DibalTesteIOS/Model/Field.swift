@@ -9,7 +9,6 @@
 import Foundation
 
 struct field {
-    var id: Int
     var id_master: Int
     var nome: String
     var descricao: String
@@ -17,4 +16,5 @@ struct field {
     var visible: Bool
     var def: String
 }
-    
+
+

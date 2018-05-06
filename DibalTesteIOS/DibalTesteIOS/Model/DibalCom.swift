@@ -39,7 +39,7 @@ class DibalCom {
     }
     
     func startLabeling(article: Artigo) {
-        if let art_cod = (article.campos["codigo"] as? NSString)?.intValue {
+        if let art_cod = Int(article.campos["codigo"]!) {
             
             sendData(data: "4A500\(String(format: "%06d", art_cod))" )
         }

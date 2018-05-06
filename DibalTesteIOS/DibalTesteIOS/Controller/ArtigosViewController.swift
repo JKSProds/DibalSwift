@@ -41,30 +41,13 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let tabBar: CustomTBViewController = segue.destination as! CustomTBViewController
-        if Firebase.selectedArticle >= 0 {
-            tabBar.Firebase = Firebase
-        }
+        let nextView: DetalheArtigoViewController = segue.destination as! DetalheArtigoViewController
         
-        let dadosVC: DetalheArtigoViewController = tabBar.viewControllers![0] as! DetalheArtigoViewController
-        dadosVC.Firebase = Firebase
-        dadosVC.id_master = 1
+            nextView.Firebase = Firebase
+
         
-        let textosVC: DetalheArtigoViewController = tabBar.viewControllers![1] as! DetalheArtigoViewController
-        textosVC.Firebase = Firebase
-        textosVC.id_master = 2
-        
-        let codbarrasVC: DetalheArtigoViewController = tabBar.viewControllers![2] as! DetalheArtigoViewController
-        codbarrasVC.Firebase = Firebase
-        codbarrasVC.id_master = 3
-        
-        let automatismosVC: DetalheArtigoViewController = tabBar.viewControllers![3] as! DetalheArtigoViewController
-        automatismosVC.Firebase = Firebase
-        automatismosVC.id_master = 4
-        
-        let outrosVC: DetalheArtigoViewController = tabBar.viewControllers![4] as! DetalheArtigoViewController
-        outrosVC.Firebase = Firebase
-        outrosVC.id_master = 5
+  
+       
         
     }
     
@@ -80,9 +63,9 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         cell.cellView.layer.cornerRadius = cell.cellView.frame.height / 2
         
-        cell.lblCodigo.text = "\(Firebase.articles[indexPath.row].campos["codigo"]!)"
+        cell.lblCodigo.text = Firebase.articles[indexPath.row].campos["codigo"]!
       
-        cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["nome"] as? String
+        cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["nome"]!
         
         
         return cell
@@ -115,6 +98,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             tableView.setEditing(false, animated: true)
         }
         start.image = #imageLiteral(resourceName: "play")
+        start.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
         return UISwipeActionsConfiguration(actions: [start])
     }
     

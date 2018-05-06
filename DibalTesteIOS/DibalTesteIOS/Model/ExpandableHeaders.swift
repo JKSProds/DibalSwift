@@ -12,4 +12,5 @@ struct ExpandableHeaders {
     var isExpanded: Bool
     var Title: String
     var Fields: [field]
+    var Image: String
 }
