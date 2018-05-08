@@ -36,6 +36,7 @@ class DibalCom {
         case .failure(let error):
             print(error)
         }
+        client.close()
     }
     
     func startLabeling(article: Artigo) {

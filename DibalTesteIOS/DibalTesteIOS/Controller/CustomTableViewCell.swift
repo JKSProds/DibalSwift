@@ -13,6 +13,7 @@ class CustomTableViewCell: UITableViewCell {
     
     @IBOutlet weak var cellView: UIView!
     @IBOutlet weak var lblCodigo: UILabel!
+    @IBOutlet weak var lblPreco: UILabel!
     @IBOutlet weak var lblDenominacao: UILabel!
     
     
@@ -21,6 +22,7 @@ class CustomTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

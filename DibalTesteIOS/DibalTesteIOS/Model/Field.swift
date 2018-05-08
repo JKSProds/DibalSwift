@@ -15,6 +15,8 @@ struct field {
     var tipo: Int
     var visible: Bool
     var def: String
+    var max: Int
+    var campos: [[String:Any]] = []
 }
 
 

@@ -17,6 +17,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     var Firebase = FirebaseCom(clientID: "20lcz9utjo0NKE84twgd")
     var Dibal = DibalCom()
+    static var UIColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +35,11 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         let tempNavVC = self.tabBarController?.viewControllers?[1] as! ConfigViewController
         tempNavVC.Dibal = self.Dibal
         
+        //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
+        NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
+        
+    
     }
     
     @IBAction func clickAddArtigo(_ sender: Any) {
@@ -63,11 +68,13 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: "customCell") as! CustomTableViewCell
         
         cell.cellView.layer.cornerRadius = cell.cellView.frame.height / 2
+        cell.cellView.backgroundColor = ArtigosViewController.UIColor
         
         cell.lblCodigo.text = Firebase.articles[indexPath.row].campos["codigo"]!
-      
         cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["nome"]!
         
+      cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["preço"]!)
+       
         
         return cell
     }
@@ -84,8 +91,16 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .normal, title: "Apagar") { (action, view, nil) in
-            self.Firebase.removeArticle(at: indexPath.row)
-            tableView.setEditing(false, animated: true)
+            let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .alert)
+            let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
+                self.Firebase.removeArticle(at: indexPath.row)
+            })
+            let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
+            alertController.addAction(CancelOption)
+            alertController.addAction(OKAction)
+            self.present(alertController, animated: true, completion: nil)
+                            tableView.setEditing(false, animated: true)
+          
         }
         delete.image = #imageLiteral(resourceName: "delete")
         delete.backgroundColor = .red
@@ -94,12 +109,20 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let start = UIContextualAction(style: .normal, title: "Iniciar") { (action, view, nil) in
-           //print("Start")
-            self.Dibal.startLabeling(article: self.Firebase.articles[indexPath.row])
+            let alertController = UIAlertController(title: "Iniciar Etiquetagem", message: "Tem a certeza que deseja iniciar a etiquetagem deste artigo?", preferredStyle: .alert)
+            let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                self.Dibal.startLabeling(article: self.Firebase.articles[indexPath.row]) })
+            let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
+            alertController.addAction(CancelOption)
+            alertController.addAction(OKAction)
+            self.present(alertController, animated: true, completion: nil)
             tableView.setEditing(false, animated: true)
+            
         }
+        
+            tableView.setEditing(false, animated: true)
         start.image = #imageLiteral(resourceName: "play")
-        start.backgroundColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+        start.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
         return UISwipeActionsConfiguration(actions: [start])
     }
     
