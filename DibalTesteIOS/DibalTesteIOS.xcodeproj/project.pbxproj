@@ -12,8 +12,9 @@
 		E7455E9F209C6E3600AFF9E5 /* FirebaseCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7455E9E209C6E3600AFF9E5 /* FirebaseCom.swift */; };
 		E7455EA1209C6E4100AFF9E5 /* DibalCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7455EA0209C6E4100AFF9E5 /* DibalCom.swift */; };
 		E7455EA4209C762900AFF9E5 /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7455EA3209C762900AFF9E5 /* Field.swift */; };
-		E7474BF620A066FC002070ED /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7474BF520A066FC002070ED /* PickerViewController.swift */; };
-		E76F88892095D16500B58566 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F88882095D16500B58566 /* CustomTableViewCell.swift */; };
+		E7474BF620A066FC002070ED /* pickerFieldsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7474BF520A066FC002070ED /* pickerFieldsView.swift */; };
+		E7474BF820A1EED5002070ED /* DetalhesArtigosTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7474BF720A1EED5002070ED /* DetalhesArtigosTableViewCell.swift */; };
+		E76F88892095D16500B58566 /* ListaArtigosTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F88882095D16500B58566 /* ListaArtigosTableViewCell.swift */; };
 		E77B26EF2093D588004D3E68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77B26EE2093D588004D3E68 /* AppDelegate.swift */; };
 		E77B26F12093D588004D3E68 /* ArtigosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77B26F02093D588004D3E68 /* ArtigosViewController.swift */; };
 		E77B26F42093D588004D3E68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E77B26F22093D588004D3E68 /* Main.storyboard */; };
@@ -32,8 +33,9 @@
 		E7455E9E209C6E3600AFF9E5 /* FirebaseCom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCom.swift; sourceTree = "<group>"; };
 		E7455EA0209C6E4100AFF9E5 /* DibalCom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DibalCom.swift; sourceTree = "<group>"; };
 		E7455EA3209C762900AFF9E5 /* Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
-		E7474BF520A066FC002070ED /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
-		E76F88882095D16500B58566 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
+		E7474BF520A066FC002070ED /* pickerFieldsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pickerFieldsView.swift; sourceTree = "<group>"; };
+		E7474BF720A1EED5002070ED /* DetalhesArtigosTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetalhesArtigosTableViewCell.swift; sourceTree = "<group>"; };
+		E76F88882095D16500B58566 /* ListaArtigosTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListaArtigosTableViewCell.swift; sourceTree = "<group>"; };
 		E77B26EB2093D588004D3E68 /* DibalTesteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DibalTesteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77B26EE2093D588004D3E68 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E77B26F02093D588004D3E68 /* ArtigosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtigosViewController.swift; sourceTree = "<group>"; };
@@ -95,8 +97,9 @@
 				E77B26F02093D588004D3E68 /* ArtigosViewController.swift */,
 				E7021DC5209BBA570091603C /* ConfigViewController.swift */,
 				E79F800A209677F30024D7B0 /* DetalheArtigoViewController.swift */,
-				E76F88882095D16500B58566 /* CustomTableViewCell.swift */,
-				E7474BF520A066FC002070ED /* PickerViewController.swift */,
+				E76F88882095D16500B58566 /* ListaArtigosTableViewCell.swift */,
+				E7474BF520A066FC002070ED /* pickerFieldsView.swift */,
+				E7474BF720A1EED5002070ED /* DetalhesArtigosTableViewCell.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -281,13 +284,14 @@
 				E79F800B209677F30024D7B0 /* DetalheArtigoViewController.swift in Sources */,
 				E7C7D26E209DB68300ECA3EC /* ExpandableHeaders.swift in Sources */,
 				E7ADCAFD2099197300170AD1 /* Artigo.swift in Sources */,
-				E76F88892095D16500B58566 /* CustomTableViewCell.swift in Sources */,
+				E76F88892095D16500B58566 /* ListaArtigosTableViewCell.swift in Sources */,
 				E7455E9F209C6E3600AFF9E5 /* FirebaseCom.swift in Sources */,
 				E7021DC6209BBA570091603C /* ConfigViewController.swift in Sources */,
-				E7474BF620A066FC002070ED /* PickerViewController.swift in Sources */,
+				E7474BF620A066FC002070ED /* pickerFieldsView.swift in Sources */,
 				E77B26F12093D588004D3E68 /* ArtigosViewController.swift in Sources */,
 				E77B26EF2093D588004D3E68 /* AppDelegate.swift in Sources */,
 				E7455EA1209C6E4100AFF9E5 /* DibalCom.swift in Sources */,
+				E7474BF820A1EED5002070ED /* DetalhesArtigosTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

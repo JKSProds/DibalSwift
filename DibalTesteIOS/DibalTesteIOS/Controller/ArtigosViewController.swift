@@ -34,6 +34,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let tempNavVC = self.tabBarController?.viewControllers?[1] as! ConfigViewController
         tempNavVC.Dibal = self.Dibal
+        tempNavVC.Firebase = self.Firebase
         
         //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
@@ -65,15 +66,15 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         return 100
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "customCell") as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "customCell") as! ListaArtigosTableViewCell
         
         cell.cellView.layer.cornerRadius = cell.cellView.frame.height / 2
         cell.cellView.backgroundColor = ArtigosViewController.UIColor
         
-        cell.lblCodigo.text = Firebase.articles[indexPath.row].campos["codigo"]!
-        cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["nome"]!
+        cell.lblCodigo.text = Firebase.articles[indexPath.row].campos["Cod_Articulo"]!
+        cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["Nombre"]!
         
-      cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["preço"]!)
+      cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["Precio"]!)
        
         
         return cell

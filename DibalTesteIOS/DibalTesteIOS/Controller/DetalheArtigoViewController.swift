@@ -25,7 +25,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             artigo = Firebase.articles[Firebase.selectedArticle]
         }
         if Firebase.selectedArticle >= 0 {
-            if artigo.campos["nome"] == "" {
+            if artigo.campos["Nombre"] == "" {
                 txtHeader.title = "Artigo"
             }else{
                 txtHeader.title = artigo.campos["nome"]
@@ -92,9 +92,9 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     @IBAction func saveArtigo(_ sender: Any) {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        let codigoArtInt = Int(artigo.campos["codigo"]!)
+        let codigoArtInt = Int(artigo.campos["Cod_Articulo"]!)
         if codigoArtInt != nil, codigoArtInt! > 0, codigoArtInt! < 1000000 {
-            artigo.campos["codigo"] = "\(codigoArtInt!)"
+            artigo.campos["Cod_Articulo"] = "\(codigoArtInt!)"
             if Firebase.selectedArticle == -1, Firebase.checkIfArticleExists(artigo: artigo) {
                 let alertController = UIAlertController(title: "Erro", message: "Esse artigo já existe! Não pode sobrepor artigos", preferredStyle: .alert)
                 let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -120,9 +120,6 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
     }
     
-    @objc func pickerViewChange(pickerView: PickerView) {
-        print(pickerView.valorAtual)
-    }
     
     // MARK: Handle TextField Events
     
@@ -145,12 +142,12 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             sender.errorMessage = "\(campoAtual.descricao) (\(mensagem))"
             ErrorMessage = "\(campoAtual.descricao) (\(mensagem))"
         }
-        if sender.accessibilityIdentifier! == "nome" {
-            if artigo.campos["nome"] != "" {
-                txtHeader.title = artigo.campos["nome"]
+        if sender.accessibilityIdentifier! == "Nombre" {
+            if artigo.campos["Nombre"] != "" {
+                txtHeader.title = artigo.campos["Nombre"]
             }else if Firebase.selectedArticle >= 0{
                 txtHeader.title = "Artigo"
-            }else if  artigo.campos["nome"] == ""{
+            }else if  artigo.campos["Nombre"] == ""{
                 txtHeader.title = "Novo Artigo"
             }
         }
@@ -180,7 +177,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             let codigoArtigo = alertController.textFields![0] as UITextField
             let codigoArtInt = Int(codigoArtigo.text!)
             if codigoArtInt != nil, codigoArtInt! > 0, codigoArtInt! < 1000000   {
-                self.artigo.campos["codigo"] = codigoArtigo.text
+                self.artigo.campos["Cod_Articulo"] = codigoArtigo.text
                 self.Firebase.selectedArticle = -1
                 self.saveArtigo(self)
             } else {
@@ -222,7 +219,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: Handle Table View Creation and Editing
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "fieldsCell")!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "fieldsCell")! as! DetalhesArtigosTableViewCell
         
         cell.removeAllSubViewOfType(type: SkyFloatingLabelTextField.self)
         cell.removeAllSubViewOfType(type: UIPickerView.self)
@@ -235,155 +232,51 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         let row = indexPath.row
         let field = Firebase.headers[section].Fields[row]
         
+        cell.placeHolderLabel = field.descricao
+        cell.titleLabel = field.descricao
+        cell.fieldNome = field.nome
+        
+        if Firebase.selectedArticle >= 0, artigo.campos[field.nome] != nil {
+            cell.fieldText = "\(artigo.campos[field.nome]!)"
+        }else{
+            cell.fieldText = field.def
+        }
+        
         if field.tipo != 4 {
-            let textField = SkyFloatingLabelTextField()
-            textField.placeholder = field.descricao
-            textField.title = field.descricao
-            textField.font = UIFont.systemFont(ofSize: 14)
-            
-            textField.lineHeight = 1.0
-            textField.lineColor = ArtigosViewController.UIColor
-            
-            textField.accessibilityIdentifier = field.nome
-            if Firebase.selectedArticle >= 0, artigo.campos[field.nome] != nil {
-                textField.text = "\(artigo.campos[field.nome]!)"
-            }else{
-                textField.text = field.def
-            }
-            
-            textField.returnKeyType = UIReturnKeyType.done
-            //textField.font = UIFont.systemFont(ofSize: 14)
-            textField.delegate = self
-            
-            textField.addTarget(self,
-                                action: #selector(textChanges),
-                                for: UIControlEvents.editingDidEnd
+            cell.textFieldView.delegate = self
+            cell.textFieldView.addTarget(self,
+                                         action: #selector(textChanges),
+                                         for: UIControlEvents.editingDidEnd
             )
             
-            
-                        textField.translatesAutoresizingMaskIntoConstraints = false
-            cell.addSubview(textField)
-            
-            textField.topAnchor.constraint(equalTo: cell.topAnchor, constant: 2).isActive = true
-            textField.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
-            textField.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 2).isActive = true
-            
-            if field.nome == "codigo", Firebase.selectedArticle != -1 {
+            if field.nome == "Cod_Articulo", Firebase.selectedArticle != -1 {
+                cell.deleteButton.addTarget(self, action: #selector(deleteArticle), for: .touchUpInside)
+                cell.copyButton.addTarget(self, action: #selector(copyArticle), for: .touchUpInside)
                 
-                //Create button delete
-                let deleteButton = UIButton(type: .system)
-                deleteButton.setTitle("Apagar", for: .normal)
-                deleteButton.setTitleColor(.white, for: .normal)
-                deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
-                deleteButton.backgroundColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
-                
-                deleteButton.addTarget(self, action: #selector(deleteArticle), for: .touchUpInside)
-                
-                deleteButton.layer.cornerRadius = 5
-                deleteButton.layer.borderWidth = 1
-                deleteButton.layer.borderColor = UIColor.red.cgColor
-                
-                deleteButton.translatesAutoresizingMaskIntoConstraints = false
-                cell.addSubview(deleteButton)
-
-                
-                deleteButton.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -5).isActive = true
-                deleteButton.topAnchor.constraint(equalTo: cell.topAnchor, constant: 10).isActive = true
-                deleteButton.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -10).isActive = true
-                deleteButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-                
-                //Create button copy
-                let copyButton = UIButton(type: .system)
-                copyButton.setTitle("Copiar", for: .normal)
-                copyButton.setTitleColor(.white, for: .normal)
-                copyButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
-                copyButton.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
-                
-                copyButton.addTarget(self, action: #selector(copyArticle), for: .touchUpInside)
-                
-                copyButton.layer.cornerRadius = 5
-                copyButton.layer.borderWidth = 1
-                copyButton.layer.borderColor = UIColor.orange.cgColor
-            
-                
-                                copyButton.translatesAutoresizingMaskIntoConstraints = false
-                cell.addSubview(copyButton)
-            
-                
-                copyButton.rightAnchor.constraint(equalTo: deleteButton.leftAnchor, constant: -5).isActive = true
-                copyButton.topAnchor.constraint(equalTo: cell.topAnchor, constant: 10).isActive = true
-                copyButton.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -10).isActive = true
-                copyButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-                
-                
-                //Disable textfield article and change width
-                textField.isEnabled = false
-                textField.rightAnchor.constraint(equalTo: copyButton.leftAnchor, constant: -5).isActive = true
-                
-                
+                cell.addTextFieldAndButton()
             }else{
-                textField.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -5).isActive = true
+                cell.addOnlyTextField()
             }
-            
         }else{
-            let label = UILabel()
-            label.text = field.descricao.uppercased()
-            label.font = UIFont.systemFont(ofSize: 14)
-            label.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
-            
-                        label.translatesAutoresizingMaskIntoConstraints = false
-            cell.addSubview(label)
-            
-            label.topAnchor.constraint(equalTo: cell.topAnchor, constant: 5).isActive = true
-            label.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 2).isActive = true
-            label.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -2)
-            
-            
-            let cb = PickerView()
-            cb.pickerData = field.campos
-            cb.delegate = cb
-            cb.dataSource = cb
+            cell.pickerView.pickerData = field.campos
             
             let index = field.campos.index(where: {$0["valor"] as? String == artigo.campos[field.nome]})
-            if index != nil, cb.pickerData.count > 0 {
-                cb.selectRow(index!, inComponent: 0, animated: true)
+            if index != nil, cell.pickerView.pickerData.count > 0 {
+                cell.pickerView.selectRow(index!, inComponent: 0, animated: true)
             }
-            cb.field = field.nome
-            //cb.target(forAction: #selector(pickerViewChange), withSender: cb)
             
-            cb.translatesAutoresizingMaskIntoConstraints = false
-            cell.addSubview(cb)
-            
-            cb.topAnchor.constraint(equalTo: label.topAnchor, constant: 10).isActive = true
-            cb.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
-            cb.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 2).isActive = true
-            cb.rightAnchor.constraint(equalTo: cell.rightAnchor, constant: -5).isActive = true
-            
-            
-            let line = UIView()
-            line.backgroundColor = ArtigosViewController.UIColor
-            cell.addSubview(line)
-            
-            line.translatesAutoresizingMaskIntoConstraints = false
-            
-            let leadingConstraint = NSLayoutConstraint(item: line, attribute: .left, relatedBy: .equal, toItem: cell, attribute: .left, multiplier: 1.0, constant: 4.0)
-            let bottomConstraint = NSLayoutConstraint(item: line, attribute: .bottom, relatedBy: .equal, toItem: cell, attribute: .bottom, multiplier: 1.0, constant: -5.0)
-            let trailingConstraint = NSLayoutConstraint(item: cell, attribute: .right, relatedBy: .equal, toItem: line, attribute: .right, multiplier: 1.0, constant: 4.0)
-            let heightConstraint = NSLayoutConstraint(item: line, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 1.0)
-            
-            cell.addConstraints([bottomConstraint, leadingConstraint, trailingConstraint, heightConstraint])
+            cell.addPickerView()
         }
-
         
         return cell
-        
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if Firebase.headers[section].isExpanded {
-            return Firebase.headers[section].Fields.count
+        if Firebase.headers[section].isExpanded, Firebase.headers[section].Fields.count > 0 {
+            return Firebase.headers[section].Fields.filter({ $0.visible }).count
         }
+
         return 0
     }
     
@@ -392,6 +285,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     // MARK: Loads Section Headers
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
         
@@ -406,6 +300,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
         let label = UILabel()
         label.text = Firebase.headers[section].Title
+        label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.frame = CGRect(x: 40, y: 5, width: self.view.frame.width, height: 30)
         
@@ -413,14 +308,19 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
         let button = UIButton(type: .system)
         button.tag = section
+        button.contentHorizontalAlignment = .right
+    
+        if Firebase.headers[section].isExpanded {
+           
+            button.setTitle("Fechar", for: .normal)
+        }else{
+           
+            button.setTitle("Abrir", for: .normal)
+        }
         
+       
         
-        
-        button.setTitle("Fechar", for: .normal)
-        
-        
-        
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         //button.frame = CGRect(x: self.view.frame.width - 65 , y: 5, width: 60, height: 30)
         button.addTarget(self, action: #selector(expandButton), for: .touchUpInside)
@@ -429,10 +329,10 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
+        button.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         button.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         button.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
         
         return view
     }
@@ -453,8 +353,10 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         var indexPaths = [IndexPath]()
         let section = button.tag
         for row in Firebase.headers[section].Fields.indices {
+            if Firebase.headers[section].Fields[row].visible {
             let indexPath = IndexPath(row: row, section: section)
             indexPaths.append(indexPath)
+            }
         }
         let isExpanded =  Firebase.headers[section].isExpanded
         

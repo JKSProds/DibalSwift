@@ -13,6 +13,7 @@ class ConfigViewController: UIViewController {
     @IBOutlet weak var txtPorta: UITextField!
     
     var Dibal = DibalCom()
+    var Firebase: FirebaseCom!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +45,16 @@ class ConfigViewController: UIViewController {
         view.endEditing(true)
     }
 
+    @IBAction func createFieldsClick(_ sender: UIButton) {
+        let alertController = UIAlertController(title: "Reset Campos", message: "Tem a certeza que deseja realizar um reset a todos os campos? Terá de reconfigurar cada campo individualmente!", preferredStyle: .alert)
+        let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
+            self.Firebase.createAllFields() })
+        let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
+        alertController.addAction(CancelOption)
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion: nil)
+
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

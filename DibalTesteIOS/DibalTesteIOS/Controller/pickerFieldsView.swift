@@ -8,13 +8,12 @@
 
 import UIKit
 
-class PickerView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource {
+class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource {
 
     
     
     var pickerData: [[String:Any]] = []
     var field = String()
-    var valorAtual = String()
 
     /*
     // Only override draw() if you perform custom drawing.
@@ -26,8 +25,6 @@ class PickerView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         let vc = self.window?.rootViewController?.presentedViewController as! DetalheArtigoViewController
-        
-        valorAtual = "\(pickerData[row]["valor"]!)"
         
         vc.artigo.campos[field] = "\(pickerData[row]["valor"]!)"
         

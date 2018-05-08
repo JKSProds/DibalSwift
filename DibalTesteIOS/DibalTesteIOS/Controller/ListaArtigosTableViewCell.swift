@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CustomTableViewCell: UITableViewCell {
+class ListaArtigosTableViewCell: UITableViewCell {
 
     
     @IBOutlet weak var cellView: UIView!
