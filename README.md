@@ -2,9 +2,9 @@
 <img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/Logo.png" width="400" />
 </div>
 
-# Dibal Swift
+# Labelling Management Swift
 
-Use of DibalCom to comunicate with Dibal Machines using your IPhone or IPad. Management of Articles and Fields.
+Comunication with Dibal Machines using your IPhone or IPad. Management of Articles and Fields.
 
 
 
