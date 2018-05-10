@@ -14,6 +14,8 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
     
     var pickerData: [[String:Any]] = []
     var field = String()
+    
+    
 
     /*
     // Only override draw() if you perform custom drawing.
@@ -31,6 +33,8 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
     }
 
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+  var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
+        fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
         
         var pickerLabel = view as? UILabel;
         
@@ -38,11 +42,13 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
         {
             pickerLabel = UILabel()
             
-            pickerLabel?.font = UIFont(name: "Tahoma", size: 16)
+            pickerLabel?.font = fontBody
             pickerLabel?.textAlignment = NSTextAlignment.left
         }
         
+        if pickerData[row].count == 2 {
         pickerLabel?.text = "\(pickerData[row]["texto"]!)"
+        }
         
         return pickerLabel!;
     }

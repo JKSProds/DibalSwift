@@ -15,6 +15,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var NovoArtigoButton: UIButton!
     
 
+
     var Firebase = FirebaseCom(clientID: "20lcz9utjo0NKE84twgd")
     var Dibal = DibalCom()
     static var UIColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
@@ -39,7 +40,6 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
         NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
-        
     
     }
     
@@ -51,10 +51,6 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         let nextView: DetalheArtigoViewController = segue.destination as! DetalheArtigoViewController
         
             nextView.Firebase = Firebase
-
-        
-  
-       
         
     }
     
@@ -92,7 +88,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .normal, title: "Apagar") { (action, view, nil) in
-            let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
                 self.Firebase.removeArticle(at: indexPath.row)
             })
@@ -110,7 +106,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let start = UIContextualAction(style: .normal, title: "Iniciar") { (action, view, nil) in
-            let alertController = UIAlertController(title: "Iniciar Etiquetagem", message: "Tem a certeza que deseja iniciar a etiquetagem deste artigo?", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Iniciar Etiquetagem", message: "Tem a certeza que deseja iniciar a etiquetagem deste artigo?", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
                 self.Dibal.startLabeling(article: self.Firebase.articles[indexPath.row]) })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)

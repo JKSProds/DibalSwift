@@ -209,12 +209,16 @@ class FirebaseCom {
                                 
                                 if index.row >= self.headers[id_master].Fields.count {
                                     let indexPath = IndexPath(row: self.headers[id_master].Fields.count, section: id_master)
+                                      if index.count > 0 {
                                     self.headers[id_master].Fields.append(f)
                                     tableView.insertRows(at: [indexPath], with: .left)
+                                    }
                                 }else{
                                     let indexPath = IndexPath(row: index.row, section: id_master)
+                                    if index.count > 0 {
                                     self.headers[id_master].Fields.insert(f, at: index.row)
                                     tableView.insertRows(at: [indexPath], with: .left)
+                                    }
                                 }
                                 
                                 
@@ -259,7 +263,7 @@ class FirebaseCom {
                        
                         let campo: [String: Any] = [
                             "id": index,
-                            "id_master": 4,
+                            "id_master": self.headers.count,
                             "nome": key,
                             "descricao": key,
                             "tipo": 0,
@@ -269,7 +273,7 @@ class FirebaseCom {
                             "campos": []
                         ]
                         
-                         self.clientRef.collection("fields").addDocument(data: campo)
+                        self.clientRef.collection("fields").document(key).setData(campo)
                         index = index + 1
                     }
                 }

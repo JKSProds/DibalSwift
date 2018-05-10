@@ -16,12 +16,27 @@ class ListaArtigosTableViewCell: UITableViewCell {
     @IBOutlet weak var lblPreco: UILabel!
     @IBOutlet weak var lblDenominacao: UILabel!
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        //setNeedsLayout()
+        setNeedsDisplay()
+    }
     
+    override func draw(_ rect: CGRect) {
+        var fontBold = UIFont.boldSystemFont(ofSize: 20)
+        fontBold = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBold)
+        var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
+        fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
+        
+        lblCodigo.font = fontBold
+        lblDenominacao.font = fontBody
+        lblPreco.font = fontBody
+    }
    
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
         
     }
 

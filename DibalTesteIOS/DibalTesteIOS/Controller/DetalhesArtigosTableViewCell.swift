@@ -15,10 +15,17 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
     var titleLabel = String()
     var fieldText = String()
     var fieldNome =  String()
+    var errorMensagem = String()
+    
+
     
     lazy var pickerViewLabel: UILabel = {
+ var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
+        fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
+        
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        //label.font = UIFont.systemFont(ofSize: 14)
+        label.font = fontBody
         label.textColor = UIColor(red: 140/255, green: 140/255, blue: 140/255, alpha: 1.0)
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -47,9 +54,13 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
     }()
     
     lazy var textFieldView: SkyFloatingLabelTextField = {
-
+var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
+        fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
         let textField = SkyFloatingLabelTextField()
-        textField.font = UIFont.systemFont(ofSize: 14)
+        
+        //textField.font = UIFont.systemFont(ofSize: 14)
+        textField.font = fontBody
+        textField.titleFont = fontBody
         
         textField.lineHeight = 1.0
         textField.lineColor = ArtigosViewController.UIColor
@@ -62,11 +73,14 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
     }()
     
     lazy var copyButton: UIButton = {
-        //Create button copy
+  var fontBody = UIFont.systemFont(ofSize: 14)
+        fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
+         //Create button copy
         let copyButton = UIButton(type: .system)
         copyButton.setTitle("Copiar", for: .normal)
         copyButton.setTitleColor(.white, for: .normal)
-        copyButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        //copyButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        copyButton.titleLabel?.font = fontBody
         copyButton.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
 
         copyButton.layer.cornerRadius = 5
@@ -79,12 +93,16 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
     }()
     
    lazy var deleteButton: UIButton = {
-       
+    var fontBody = UIFont.systemFont(ofSize: 14)
+    fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
+    
+    
         //Create button delete
         let deleteButton = UIButton(type: .system)
         deleteButton.setTitle("Apagar", for: .normal)
         deleteButton.setTitleColor(.white, for: .normal)
-        deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        //deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+     deleteButton.titleLabel?.font = fontBody
         deleteButton.backgroundColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
         
         deleteButton.layer.cornerRadius = 5
@@ -125,7 +143,7 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
         textFieldView.title = titleLabel
         textFieldView.text = fieldText
         textFieldView.accessibilityIdentifier = fieldNome
-        textFieldView.errorMessage = ""
+        textFieldView.errorMessage = errorMensagem
      
         
         self.addSubview(textFieldView)
@@ -146,7 +164,7 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
         textFieldView.title = titleLabel
         textFieldView.text = fieldText
         textFieldView.accessibilityIdentifier = fieldNome
-               textFieldView.errorMessage = ""
+        textFieldView.errorMessage = errorMensagem
         
                textFieldView.isEnabled = true
         
@@ -192,5 +210,6 @@ class DetalhesArtigosTableViewCell: UITableViewCell, UITextFieldDelegate {
 
         // Configure the view for the selected state
     }
+    
 
 }

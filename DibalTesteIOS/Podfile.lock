@@ -57,14 +57,12 @@ PODS:
   - Protobuf (3.5.0)
   - SkyFloatingLabelTextField (3.4.1)
   - SwiftSocket (2.0.2)
-  - UIFloatLabelTextField (1.2.9)
 
 DEPENDENCIES:
   - Firebase/Core
   - Firebase/Firestore
   - SkyFloatingLabelTextField
   - SwiftSocket
-  - UIFloatLabelTextField
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -84,7 +82,6 @@ SPEC REPOS:
     - Protobuf
     - SkyFloatingLabelTextField
     - SwiftSocket
-    - UIFloatLabelTextField
 
 SPEC CHECKSUMS:
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
@@ -103,8 +100,7 @@ SPEC CHECKSUMS:
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   SkyFloatingLabelTextField: 8085f20f57f74a00cfcae58099299faa1a971035
   SwiftSocket: 6f4c9c63fbc5c1d61188936bb3c599fd546f40ae
-  UIFloatLabelTextField: c1df7d4e688a1bd52738513f961df16f94914367
 
-PODFILE CHECKSUM: 86784b3c6acc88c671553e5c13134aa0b39bfe34
+PODFILE CHECKSUM: bb7eeab277b9320f23f4aed700e416a942a2eb76
 
 COCOAPODS: 1.5.0

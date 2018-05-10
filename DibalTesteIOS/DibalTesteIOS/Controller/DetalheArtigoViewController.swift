@@ -14,7 +14,7 @@ import SkyFloatingLabelTextField
 class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     var Firebase: FirebaseCom!
     var artigo = Artigo()
-    var ErrorMessage = String()
+    var ErrorMessages = [(id: String, message: String, texto: String)]()
     
     @IBOutlet weak var txtHeader: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
@@ -28,7 +28,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             if artigo.campos["Nombre"] == "" {
                 txtHeader.title = "Artigo"
             }else{
-                txtHeader.title = artigo.campos["nome"]
+                txtHeader.title = artigo.campos["Nombre"]
             }
         }else{
             txtHeader.title = "Novo Artigo"
@@ -46,7 +46,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
         
         Firebase.getAllFields(tableView: tableView)
-        Firebase.setAllExpanded()
+        //Firebase.setAllExpanded()
         
         
         
@@ -86,7 +86,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: Handle Navigation Bar Buttons
     
     @IBAction func cancelNovoArtigo(_ sender: Any) {
-        Firebase.list.remove()
+        //Firebase.list.remove()
         dismiss(animated: true, completion: nil)
     }
     
@@ -96,12 +96,12 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         if codigoArtInt != nil, codigoArtInt! > 0, codigoArtInt! < 1000000 {
             artigo.campos["Cod_Articulo"] = "\(codigoArtInt!)"
             if Firebase.selectedArticle == -1, Firebase.checkIfArticleExists(artigo: artigo) {
-                let alertController = UIAlertController(title: "Erro", message: "Esse artigo já existe! Não pode sobrepor artigos", preferredStyle: .alert)
+                let alertController = UIAlertController(title: "Erro", message: "Esse artigo já existe! Não pode sobrepor artigos", preferredStyle: .actionSheet)
                 let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                 alertController.addAction(OKAction)
                 self.present(alertController, animated: true, completion: nil)
-            }else if ErrorMessage != ""{
-                let alertController = UIAlertController(title: "Erro", message: ErrorMessage, preferredStyle: .alert)
+            }else if ErrorMessages.count > 0{
+                let alertController = UIAlertController(title: "Erro", message: ErrorMessages.first?.message, preferredStyle: .alert)
                 let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                 alertController.addAction(OKAction)
                 self.present(alertController, animated: true, completion: nil)
@@ -112,7 +112,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 dismiss(animated: true, completion: nil)
             }
         }else{
-            let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(OKAction)
             self.present(alertController, animated: true, completion: nil)
@@ -136,11 +136,19 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         if  mensagem == "" {
             artigo.campos[sender.accessibilityIdentifier!] = sender.text
             sender.errorMessage = mensagem
-            ErrorMessage = mensagem
+            let indexErro = ErrorMessages.index(where: {($0.id == sender.accessibilityIdentifier)})
+            if indexErro != nil {
+                ErrorMessages.remove(at: indexErro!)
+            }
             sender.title = campoAtual.descricao
         }else{
             sender.errorMessage = "\(campoAtual.descricao) (\(mensagem))"
-            ErrorMessage = "\(campoAtual.descricao) (\(mensagem))"
+            if let indexErro = ErrorMessages.index(where: {($0.id == sender.accessibilityIdentifier)}) {
+                ErrorMessages[indexErro] = ((id: sender.accessibilityIdentifier!, message: "\(campoAtual.descricao) (\(mensagem))", texto: sender.text!))
+            }else{
+            ErrorMessages.append((id: sender.accessibilityIdentifier!, message: "\(campoAtual.descricao) (\(mensagem))", texto: sender.text!))
+            }
+            
         }
         if sender.accessibilityIdentifier! == "Nombre" {
             if artigo.campos["Nombre"] != "" {
@@ -154,7 +162,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc func deleteArticle(button: UIButton) {
-        let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .actionSheet)
         let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
             self.Firebase.removeArticle(at: self.Firebase.selectedArticle)
             self.dismiss(animated: true, completion: nil)
@@ -166,7 +174,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         
     }
     
-    @objc func copyArticle(button: UIButton) {
+    @objc func copyArticle(button: UIButton) {        
         let alertController = UIAlertController(title: "Copiar Artigo", message: "Por favor insira o codigo para onde deseja copiar o artigo!", preferredStyle: .alert)
         
         let OKAction = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
@@ -181,7 +189,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 self.Firebase.selectedArticle = -1
                 self.saveArtigo(self)
             } else {
-                let errorAlert = UIAlertController(title: "Erro", message: "Por favor insira um valor válido!", preferredStyle: .alert)
+                let errorAlert = UIAlertController(title: "Erro", message: "Por favor insira um valor válido!", preferredStyle: .actionSheet)
                 errorAlert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: {
                     alert -> Void in
                     self.present(alertController, animated: true, completion: nil)
@@ -221,62 +229,82 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "fieldsCell")! as! DetalhesArtigosTableViewCell
         
-        cell.removeAllSubViewOfType(type: SkyFloatingLabelTextField.self)
-        cell.removeAllSubViewOfType(type: UIPickerView.self)
-        cell.removeAllSubViewOfType(type: UIButton.self)
-        cell.removeAllSubViewOfType(type: UILabel.self)
-        cell.removeAllSubViewOfType(type: UIView.self)
-        
-        
-        let section = indexPath.section
-        let row = indexPath.row
-        let field = Firebase.headers[section].Fields[row]
-        
-        cell.placeHolderLabel = field.descricao
-        cell.titleLabel = field.descricao
-        cell.fieldNome = field.nome
-        
-        if Firebase.selectedArticle >= 0, artigo.campos[field.nome] != nil {
-            cell.fieldText = "\(artigo.campos[field.nome]!)"
-        }else{
-            cell.fieldText = field.def
-        }
-        
-        if field.tipo != 4 {
-            cell.textFieldView.delegate = self
-            cell.textFieldView.addTarget(self,
-                                         action: #selector(textChanges),
-                                         for: UIControlEvents.editingDidEnd
-            )
+        if Firebase.headers[indexPath.section].Fields[indexPath.row].visible {
             
-            if field.nome == "Cod_Articulo", Firebase.selectedArticle != -1 {
-                cell.deleteButton.addTarget(self, action: #selector(deleteArticle), for: .touchUpInside)
-                cell.copyButton.addTarget(self, action: #selector(copyArticle), for: .touchUpInside)
-                
-                cell.addTextFieldAndButton()
+            cell.removeAllSubViewOfType(type: SkyFloatingLabelTextField.self)
+            cell.removeAllSubViewOfType(type: UIPickerView.self)
+            cell.removeAllSubViewOfType(type: UIButton.self)
+            cell.removeAllSubViewOfType(type: UILabel.self)
+            cell.removeAllSubViewOfType(type: UIView.self)
+            
+            let section = indexPath.section
+            let row = indexPath.row
+            let field = Firebase.headers[section].Fields[row]
+            
+            cell.placeHolderLabel = field.descricao
+            cell.titleLabel = field.descricao
+            cell.fieldNome = field.nome
+            
+            if Firebase.selectedArticle >= 0, artigo.campos[field.nome] != nil {
+                cell.fieldText = "\(artigo.campos[field.nome]!)"
             }else{
-                cell.addOnlyTextField()
-            }
-        }else{
-            cell.pickerView.pickerData = field.campos
-            
-            let index = field.campos.index(where: {$0["valor"] as? String == artigo.campos[field.nome]})
-            if index != nil, cell.pickerView.pickerData.count > 0 {
-                cell.pickerView.selectRow(index!, inComponent: 0, animated: true)
+                cell.fieldText = field.def
             }
             
-            cell.addPickerView()
+            
+            //ErrorMessages.index(where: {($0.id == sender.accessibilityIdentifier)})!)
+            let indexError = ErrorMessages.index(where: {($0.id == field.nome)})
+            if  indexError != nil {
+                cell.errorMensagem = ErrorMessages[indexError!].message
+                cell.fieldText = ErrorMessages[indexError!].texto
+            }else{
+                cell.errorMensagem = ""
+            }
+            
+            
+            
+            if field.tipo != 4 {
+                cell.textFieldView.delegate = self
+                cell.textFieldView.addTarget(self,
+                                             action: #selector(textChanges),
+                                             for: UIControlEvents.editingDidEnd
+                )
+                
+                if field.nome == "Cod_Articulo", Firebase.selectedArticle != -1 {
+                    cell.deleteButton.addTarget(self, action: #selector(deleteArticle), for: .touchUpInside)
+                    cell.copyButton.addTarget(self, action: #selector(copyArticle), for: .touchUpInside)
+                    
+                    cell.addTextFieldAndButton()
+                }else{
+                    cell.addOnlyTextField()
+                }
+            }else{
+                cell.pickerView.pickerData = field.campos
+                
+                let index = field.campos.index(where: {$0["valor"] as? String == artigo.campos[field.nome]})
+                if index != nil {
+                    cell.pickerView.selectRow(index!, inComponent: 0, animated: true)
+                }else if cell.pickerView.pickerData.count > 0 {
+                    cell.pickerView.selectRow(0, inComponent: 0, animated: true)
+                }
+                
+                cell.addPickerView()
+            }
+            
         }
-        
         return cell
+        
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if Firebase.headers[section].isExpanded, Firebase.headers[section].Fields.count > 0 {
-            return Firebase.headers[section].Fields.filter({ $0.visible }).count
+        
+        
+        if Firebase.headers[section].isExpanded {
+            return Firebase.headers[section].Fields.count
         }
-
+        
+        
         return 0
     }
     
@@ -288,6 +316,11 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
+        
+        var fontBold = UIFont.boldSystemFont(ofSize: 20)
+        fontBold = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBold)
+        var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
+        fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
         
         //view.backgroundColor = #colorLiteral(red: 1, green: 0.6031938878, blue: 0.08309882165, alpha: 1)
         view.backgroundColor = ArtigosViewController.UIColor
@@ -301,27 +334,28 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         let label = UILabel()
         label.text = Firebase.headers[section].Title
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = fontBold
         label.frame = CGRect(x: 40, y: 5, width: self.view.frame.width, height: 30)
         
         view.addSubview(label)
         
         let button = UIButton(type: .system)
+        
         button.tag = section
         button.contentHorizontalAlignment = .right
-    
+        
         if Firebase.headers[section].isExpanded {
-           
+            
             button.setTitle("Fechar", for: .normal)
         }else{
-           
+            
             button.setTitle("Abrir", for: .normal)
         }
         
-       
+        
         
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.titleLabel?.font = fontBody
         //button.frame = CGRect(x: self.view.frame.width - 65 , y: 5, width: 60, height: 30)
         button.addTarget(self, action: #selector(expandButton), for: .touchUpInside)
         
@@ -352,15 +386,16 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     @objc func expandButton(button: UIButton) {
         var indexPaths = [IndexPath]()
         let section = button.tag
+        
+        let isExpanded =  Firebase.headers[section].isExpanded
+        Firebase.headers[section].isExpanded = !isExpanded
+        
         for row in Firebase.headers[section].Fields.indices {
-            if Firebase.headers[section].Fields[row].visible {
+            
             let indexPath = IndexPath(row: row, section: section)
             indexPaths.append(indexPath)
-            }
+            
         }
-        let isExpanded =  Firebase.headers[section].isExpanded
-        
-        Firebase.headers[section].isExpanded = !isExpanded
         
         if !isExpanded {
             tableView.insertRows(at: indexPaths, with: .fade)
