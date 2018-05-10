@@ -1,5 +1,5 @@
 <div align = "center">
-<img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/Logo.png" width="700" />
+<img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/Logo.png" width="400" />
 </div>
 
 # Dibal Swift
@@ -16,10 +16,10 @@ Use of DibalCom to comunicate with Dibal Machines using your IPhone or IPad. Man
 
 <div align = "center">
 <img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/gifs/list_articles.gif" width="400" />
-<img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/gifs/detail_article" width="400" />
+<img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/gifs/detail_article.gif" width="400" />
 </div>
 
 <div align = "center">
 <img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/gifs/add_article.gif" width="400" />
-<img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/gifs/copy_delete_article" width="400" />
+<img src="DibalTesteIOS/DibalTesteIOS/Other/Assets.xcassets/gifs/copy_delete_article.gif" width="400" />
 </div>
