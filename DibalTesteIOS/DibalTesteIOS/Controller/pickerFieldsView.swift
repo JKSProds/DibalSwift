@@ -14,6 +14,7 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
     
     var pickerData: [[String:Any]] = []
     var field = String()
+    var viewControllerMaster: DetalheArtigoViewController!
     
     
 
@@ -26,10 +27,8 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
     */
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let vc = self.window?.rootViewController?.presentedViewController as! DetalheArtigoViewController
-        
-        vc.artigo.campos[field] = "\(pickerData[row]["valor"]!)"
-        
+         viewControllerMaster.artigo.campos[field] = "\(pickerData[row]["valor"]!)"
+        viewControllerMaster.savedArticle = false
     }
 
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {

@@ -21,6 +21,7 @@
 		E77B26F62093D588004D3E68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77B26F52093D588004D3E68 /* Assets.xcassets */; };
 		E77B26F92093D588004D3E68 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E77B26F72093D588004D3E68 /* LaunchScreen.storyboard */; };
 		E77B27012093D5B8004D3E68 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E77B27002093D5B8004D3E68 /* GoogleService-Info.plist */; };
+		E789D8AA20A4A7C50054D7D8 /* ArtigosSplitterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */; };
 		E79F800B209677F30024D7B0 /* DetalheArtigoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F800A209677F30024D7B0 /* DetalheArtigoViewController.swift */; };
 		E7ADCAFD2099197300170AD1 /* Artigo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7ADCAFC2099197300170AD1 /* Artigo.swift */; };
 		E7C7D26E209DB68300ECA3EC /* ExpandableHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C7D26D209DB68300ECA3EC /* ExpandableHeaders.swift */; };
@@ -44,6 +45,7 @@
 		E77B26F82093D588004D3E68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E77B26FA2093D588004D3E68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E77B27002093D5B8004D3E68 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArtigosSplitterViewController.swift; path = DibalTesteIOS/Controller/ArtigosSplitterViewController.swift; sourceTree = SOURCE_ROOT; };
 		E79F800A209677F30024D7B0 /* DetalheArtigoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetalheArtigoViewController.swift; sourceTree = "<group>"; };
 		E7ADCAFC2099197300170AD1 /* Artigo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artigo.swift; sourceTree = "<group>"; };
 		E7C7D26D209DB68300ECA3EC /* ExpandableHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableHeaders.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				E76F88882095D16500B58566 /* ListaArtigosTableViewCell.swift */,
 				E7474BF520A066FC002070ED /* pickerFieldsView.swift */,
 				E7474BF720A1EED5002070ED /* DetalhesArtigosTableViewCell.swift */,
+				E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E789D8AA20A4A7C50054D7D8 /* ArtigosSplitterViewController.swift in Sources */,
 				E7455EA4209C762900AFF9E5 /* Field.swift in Sources */,
 				E79F800B209677F30024D7B0 /* DetalheArtigoViewController.swift in Sources */,
 				E7C7D26E209DB68300ECA3EC /* ExpandableHeaders.swift in Sources */,
@@ -437,7 +441,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FML26AHP7X;
 				INFOPLIST_FILE = DibalTesteIOS/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jksprods.DibalTesteIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -453,7 +460,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FML26AHP7X;
 				INFOPLIST_FILE = DibalTesteIOS/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jksprods.DibalTesteIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;

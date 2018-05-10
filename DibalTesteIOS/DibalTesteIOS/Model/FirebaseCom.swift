@@ -82,6 +82,7 @@ class FirebaseCom {
                         
                         let indexPath = IndexPath(row: Int(diff.oldIndex), section: 0)
                         tableView.deleteRows(at: [indexPath], with: .bottom)
+                        
                     }
                 }
             }
@@ -100,7 +101,7 @@ class FirebaseCom {
     
     
     func removeArticle(at index: Int) {
-        
+        if index >= 0 {
         var docID: String = ""
         clientRef.collection("articles").whereField("Cod_Articulo", isEqualTo: articles[index].campos["Cod_Articulo"]!)
             .getDocuments() { (querySnapshot, err) in
@@ -113,6 +114,7 @@ class FirebaseCom {
                         self.clientRef.collection("articles").document(docID).delete()
                     }
                 }
+        }
         }
     }
     
@@ -237,11 +239,9 @@ class FirebaseCom {
                     }
                 }
             }
-            tableView.reloadData()
-            for header in self.headers.indices {
-            
-            tableView.reloadSections(IndexSet(integer: header), with: .automatic)
-            }
+            let range = NSMakeRange(0, tableView.numberOfSections)
+            let sections = NSIndexSet(indexesIn: range)
+            tableView.reloadSections(sections as IndexSet, with: .automatic)
            }
     }
     

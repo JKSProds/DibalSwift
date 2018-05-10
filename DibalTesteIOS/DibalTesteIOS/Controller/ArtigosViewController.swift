@@ -14,21 +14,20 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var NovoArtigoButton: UIButton!
     
-
-
+    
+    
     var Firebase = FirebaseCom(clientID: "20lcz9utjo0NKE84twgd")
     var Dibal = DibalCom()
     static var UIColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-       //loads name of client
+        
+        //loads name of client
         Firebase.getClientHeader(to: lblHeader)
         
         //load all articles
         Firebase.getAllArticles(tableView: tableView)
-        
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -40,17 +39,23 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
         NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
-    
+        
+        if let detail: DetalheArtigoViewController = navigationController?.splitViewController?.viewControllers.last as? DetalheArtigoViewController {
+            detail.Firebase = self.Firebase
+            Firebase.getAllFields(tableView: detail.tableView)
+        }
+        
     }
     
+    
     @IBAction func clickAddArtigo(_ sender: Any) {
-       Firebase.selectedArticle = -1
+        Firebase.selectedArticle = -1
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let nextView: DetalheArtigoViewController = segue.destination as! DetalheArtigoViewController
         
-            nextView.Firebase = Firebase
+        nextView.Firebase = Firebase
         
     }
     
@@ -70,8 +75,8 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.lblCodigo.text = Firebase.articles[indexPath.row].campos["Cod_Articulo"]!
         cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["Nombre"]!
         
-      cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["Precio"]!)
-       
+        cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["Precio"]!)
+        
         
         return cell
     }
@@ -90,14 +95,23 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         let delete = UIContextualAction(style: .normal, title: "Apagar") { (action, view, nil) in
             let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
+                
+                if let dvc = self.splitViewController?.viewControllers.last as? DetalheArtigoViewController {
+                    
+                    self.Firebase.selectedArticle = -1
+                    
+                    let range = NSMakeRange(0, self.tableView.numberOfSections)
+                    let sections = NSIndexSet(indexesIn: range)
+                    dvc.tableView.reloadSections(sections as IndexSet, with: .automatic) 
+                }
                 self.Firebase.removeArticle(at: indexPath.row)
             })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
             alertController.addAction(OKAction)
             self.present(alertController, animated: true, completion: nil)
-                            tableView.setEditing(false, animated: true)
-          
+            tableView.setEditing(false, animated: true)
+            
         }
         delete.image = #imageLiteral(resourceName: "delete")
         delete.backgroundColor = .red
@@ -117,7 +131,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             
         }
         
-            tableView.setEditing(false, animated: true)
+        tableView.setEditing(false, animated: true)
         start.image = #imageLiteral(resourceName: "play")
         start.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
         return UISwipeActionsConfiguration(actions: [start])

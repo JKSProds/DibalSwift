@@ -15,24 +15,29 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     var Firebase: FirebaseCom!
     var artigo = Artigo()
     var ErrorMessages = [(id: String, message: String, texto: String)]()
+    var savedArticle = true
     
-    @IBOutlet weak var txtHeader: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Guardar", style: .done, target: self, action: #selector(saveArtigo))
         super.viewDidLoad()
-        if Firebase.selectedArticle >= 0  {
-            artigo = Firebase.articles[Firebase.selectedArticle]
-        }
-        if Firebase.selectedArticle >= 0 {
-            if artigo.campos["Nombre"] == "" {
-                txtHeader.title = "Artigo"
-            }else{
-                txtHeader.title = artigo.campos["Nombre"]
+        if Firebase != nil {
+            if Firebase.selectedArticle >= 0  {
+                artigo = Firebase.articles[Firebase.selectedArticle]
             }
-        }else{
-            txtHeader.title = "Novo Artigo"
+            if Firebase.selectedArticle >= 0 {
+                if artigo.campos["Nombre"] == "" {
+                    navigationItem.title = "Artigo"
+                }else{
+                    navigationItem.title = artigo.campos["Nombre"]
+                }
+            }else{
+                navigationItem.title = "Novo Artigo"
+            }
+            
         }
+        
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -45,11 +50,43 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
         
-        Firebase.getAllFields(tableView: tableView)
+        
         //Firebase.setAllExpanded()
         
         
         
+    }
+    
+    
+    // MARK: Handling switching between articles so that it saves.
+    override func willMove(toParentViewController parent: UIViewController?)
+    {
+        
+        super.willMove(toParentViewController: parent)
+        
+        if parent == nil
+        {
+            if !self.savedArticle  {
+                
+                
+                let alertController = UIAlertController(title: "Guarda Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .alert)
+                
+                
+                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                    self.saveArtigo(self)
+                    
+                    
+                })
+                let CancelOption = UIAlertAction(title: "Não", style: .cancel, handler: nil)
+                alertController.addAction(CancelOption)
+                alertController.addAction(OKAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                
+                
+            }
+            
+        }
     }
     
     // MARK: Keyboar Handling
@@ -85,12 +122,8 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: Handle Navigation Bar Buttons
     
-    @IBAction func cancelNovoArtigo(_ sender: Any) {
-        //Firebase.list.remove()
-        dismiss(animated: true, completion: nil)
-    }
     
-    @IBAction func saveArtigo(_ sender: Any) {
+    @objc func saveArtigo(_ sender: Any) {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         let codigoArtInt = Int(artigo.campos["Cod_Articulo"]!)
         if codigoArtInt != nil, codigoArtInt! > 0, codigoArtInt! < 1000000 {
@@ -109,7 +142,8 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 
                 Firebase.uploadArtigo(artigo: artigo)
                 Firebase.list.remove()
-                dismiss(animated: true, completion: nil)
+                savedArticle = true
+                self.navigationController?.popToRootViewController(animated: true)
             }
         }else{
             let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .actionSheet)
@@ -134,6 +168,9 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         let mensagem = Firebase.checkArticleField(at: campoAtual, string: sender.text!)
         
         if  mensagem == "" {
+            if artigo.campos[sender.accessibilityIdentifier!] != sender.text {
+                savedArticle = false
+            }
             artigo.campos[sender.accessibilityIdentifier!] = sender.text
             sender.errorMessage = mensagem
             let indexErro = ErrorMessages.index(where: {($0.id == sender.accessibilityIdentifier)})
@@ -146,26 +183,33 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             if let indexErro = ErrorMessages.index(where: {($0.id == sender.accessibilityIdentifier)}) {
                 ErrorMessages[indexErro] = ((id: sender.accessibilityIdentifier!, message: "\(campoAtual.descricao) (\(mensagem))", texto: sender.text!))
             }else{
-            ErrorMessages.append((id: sender.accessibilityIdentifier!, message: "\(campoAtual.descricao) (\(mensagem))", texto: sender.text!))
+                ErrorMessages.append((id: sender.accessibilityIdentifier!, message: "\(campoAtual.descricao) (\(mensagem))", texto: sender.text!))
             }
             
         }
         if sender.accessibilityIdentifier! == "Nombre" {
             if artigo.campos["Nombre"] != "" {
-                txtHeader.title = artigo.campos["Nombre"]
+                navigationItem.title = artigo.campos["Nombre"]
             }else if Firebase.selectedArticle >= 0{
-                txtHeader.title = "Artigo"
+                navigationItem.title = "Artigo"
             }else if  artigo.campos["Nombre"] == ""{
-                txtHeader.title = "Novo Artigo"
+                navigationItem.title = "Novo Artigo"
             }
         }
+        
     }
     
     @objc func deleteArticle(button: UIButton) {
         let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .actionSheet)
         let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
             self.Firebase.removeArticle(at: self.Firebase.selectedArticle)
-            self.dismiss(animated: true, completion: nil)
+            
+            self.Firebase.selectedArticle = -1
+            
+            let range = NSMakeRange(0, self.tableView.numberOfSections)
+            let sections = NSIndexSet(indexesIn: range)
+            self.tableView.reloadSections(sections as IndexSet, with: .automatic)
+             self.navigationController?.popToRootViewController(animated: true)
         })
         let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
         alertController.addAction(CancelOption)
@@ -264,6 +308,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             
             
             if field.tipo != 4 {
+                
                 cell.textFieldView.delegate = self
                 cell.textFieldView.addTarget(self,
                                              action: #selector(textChanges),
@@ -279,6 +324,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                     cell.addOnlyTextField()
                 }
             }else{
+                cell.pickerView.viewControllerMaster = self
                 cell.pickerView.pickerData = field.campos
                 
                 let index = field.campos.index(where: {$0["valor"] as? String == artigo.campos[field.nome]})
@@ -313,6 +359,8 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     // MARK: Loads Section Headers
+    
+
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
