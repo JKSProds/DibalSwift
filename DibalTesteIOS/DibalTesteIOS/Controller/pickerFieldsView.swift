@@ -9,7 +9,7 @@
 import UIKit
 
 class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource {
-
+    
     
     
     var pickerData: [[String:Any]] = []
@@ -17,23 +17,26 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
     var viewControllerMaster: DetalheArtigoViewController!
     
     
-
+    
     /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
+     // Only override draw() if you perform custom drawing.
+     // An empty implementation adversely affects performance during animation.
+     override func draw(_ rect: CGRect) {
+     // Drawing code
+     }
+     */
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-         viewControllerMaster.artigo.campos[field] = "\(pickerData[row]["valor"]!)"
+        viewControllerMaster.artigo.campos[field] = "\(pickerData[row]["valor"]!)"
         viewControllerMaster.savedArticle = false
     }
-
+    
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-  var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
+        super.layoutSubviews()
+        var fontBody = UIFont.preferredFont(forTextStyle: .body).withSize(14)
         fontBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: fontBody)
+        
+        
         
         var pickerLabel = view as? UILabel;
         
@@ -46,7 +49,7 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
         }
         
         if pickerData[row].count == 2 {
-        pickerLabel?.text = "\(pickerData[row]["texto"]!)"
+            pickerLabel?.text = "\(pickerData[row]["texto"]!)"
         }
         
         return pickerLabel!;
@@ -54,26 +57,26 @@ class pickerFieldsView: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSour
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
-    
+        
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return pickerData.count
     }
     
-   // func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-   //    return "\(pickerData[row]["texto"]!)"
-  //
+    // func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    //    return "\(pickerData[row]["texto"]!)"
+    //
     
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//
-//        self.layer.borderWidth = 0 // Main view rounded border
-//
-//        // Component borders
-//        self.subviews.forEach {
-//            $0.layer.borderWidth = 0
-//            $0.isHidden = $0.frame.height <= 1.0
-//        }
-//    }
+    //    override func layoutSubviews() {
+    //        super.layoutSubviews()
+    //
+    //        self.layer.borderWidth = 0 // Main view rounded border
+    //
+    //        // Component borders
+    //        self.subviews.forEach {
+    //            $0.layer.borderWidth = 0
+    //            $0.isHidden = $0.frame.height <= 1.0
+    //        }
+    //    }
 }

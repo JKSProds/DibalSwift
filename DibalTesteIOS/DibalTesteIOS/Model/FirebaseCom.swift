@@ -143,7 +143,7 @@ class FirebaseCom {
                     res = "Valor não é um valor de peso!"
                 }
             case 6:
-                if Artigo.dateConverter(string: string) == nil {
+                if Artigo.dateConverter(string: string) == "" {
                     return "O valor inserido não é uma data!"
                 }
             case 5:
@@ -176,7 +176,7 @@ class FirebaseCom {
             case 6:
                 return Artigo.dateConverter(string: string)!
             default:
-                res = ""
+                res = string
             }
 
         return res

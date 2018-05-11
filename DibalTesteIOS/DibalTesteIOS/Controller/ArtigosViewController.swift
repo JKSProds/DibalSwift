@@ -20,10 +20,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     var Dibal = DibalCom()
     static var UIColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
     private var splitViewDetailArticleViewController: DetalheArtigoViewController?{
-        if let nvc = splitViewController?.viewControllers.last as? UINavigationController {
-            return nvc.viewControllers.first as? DetalheArtigoViewController
-        }else if let dvc = splitViewController?.viewControllers.last as? DetalheArtigoViewController {
+        if let dvc = splitViewController?.viewControllers.last as? DetalheArtigoViewController {
             return dvc
+            
+        }else if let nvc = splitViewController?.viewControllers.last as? UINavigationController {
+            return nvc.viewControllers.first as? DetalheArtigoViewController
+    
         }
         return nil
         
@@ -48,7 +50,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
-        NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
+        //NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
         
         if let detail = splitViewDetailArticleViewController {
             
@@ -100,6 +102,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     dvc.saveArtigo(self)
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
+                    dvc.loadHeader()
                     dvc.tableView.reloadData()
                     dvc.ErrorMessages = []
                     
@@ -108,6 +111,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     dvc.savedArticle = true
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
+                               dvc.loadHeader()
                     dvc.tableView.reloadData()
                     dvc.ErrorMessages = []
                 })
@@ -115,14 +119,22 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 alertController.addAction(OKAction)
                 
                 if let popoverController = alertController.popoverPresentationController {
-                    popoverController.sourceView = self.tableView
-                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+              
+                    if Firebase.selectedArticle == -1 {
+                              popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                           popoverController.permittedArrowDirections = []
+                    }else{
+                         popoverController.sourceView = self.tableView
+                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    }
                 }
                 
                 self.present(alertController, animated: true, completion: nil)
             }else{
                 self.Firebase.selectedArticle = -1
                 dvc.artigo = Artigo()
+                           dvc.loadHeader()
                 dvc.tableView.reloadData()
                 dvc.ErrorMessages = []
             }
@@ -136,14 +148,16 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
                     dvc.tableView.reloadData()
+                               dvc.loadHeader()
                     dvc.ErrorMessages = []
-                    self.navigationController?.pushViewController(dvc, animated: true)
+                    self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
                 })
                 let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
                     dvc.savedArticle = true
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
                     dvc.tableView.reloadData()
+                               dvc.loadHeader()
                     dvc.ErrorMessages = []
                     self.navigationController?.pushViewController(dvc, animated: true)
                 })
@@ -152,17 +166,26 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 
                 
                 if let popoverController = alertController.popoverPresentationController {
-                    popoverController.sourceView = self.tableView
-                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    
+                    if Firebase.selectedArticle == -1 {
+                        popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                          popoverController.permittedArrowDirections = []
+                    }else{
+                        popoverController.sourceView = self.tableView
+                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    }
                 }
+                
                 
                 self.present(alertController, animated: true, completion: nil)
             }else{
                 self.Firebase.selectedArticle = -1
                 dvc.artigo = Artigo()
                 dvc.tableView.reloadData()
+                           dvc.loadHeader()
                 dvc.ErrorMessages = []
-                navigationController?.pushViewController(dvc, animated: true)
+                navigationController?.pushViewController(dvc.navigationController!, animated: true)
             }
         }else{
             self.performSegue(withIdentifier: "DetalheArtigoSegue", sender: self)
@@ -182,6 +205,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                         self.Firebase.selectedArticle = indexPath.row
                         dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                         dvc.tableView.reloadData()
+                                   dvc.loadHeader()
                         dvc.ErrorMessages = []
                         
                     })
@@ -190,14 +214,22 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                         self.Firebase.selectedArticle = indexPath.row
                         dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                         dvc.tableView.reloadData()
+                                   dvc.loadHeader()
                         dvc.ErrorMessages = []
                     })
                     alertController.addAction(CancelOption)
                     alertController.addAction(OKAction)
                     
                     if let popoverController = alertController.popoverPresentationController {
-                        popoverController.sourceView = self.tableView
-                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                        
+                        if Firebase.selectedArticle == -1 {
+                            popoverController.sourceView = self.view
+                            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                             popoverController.permittedArrowDirections = []
+                        }else{
+                            popoverController.sourceView = self.tableView
+                            popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                        }
                     }
                     
                     self.present(alertController, animated: true, completion: nil)
@@ -205,6 +237,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.Firebase.selectedArticle = indexPath.row
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
+                               dvc.loadHeader()
                     dvc.ErrorMessages = []
                 }
             }
@@ -217,6 +250,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.Firebase.selectedArticle = indexPath.row
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
+                               dvc.loadHeader()
                     dvc.ErrorMessages = []
                     self.navigationController?.pushViewController(dvc, animated: true)
                 })
@@ -225,16 +259,24 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.Firebase.selectedArticle = indexPath.row
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
+                               dvc.loadHeader()
                     dvc.ErrorMessages = []
-                    self.navigationController?.pushViewController(dvc, animated: true)
+                    self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
                 })
                 alertController.addAction(CancelOption)
                 alertController.addAction(OKAction)
                 
                 
                 if let popoverController = alertController.popoverPresentationController {
-                    popoverController.sourceView = self.tableView
-                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    
+                    if Firebase.selectedArticle == -1 {
+                        popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                               popoverController.permittedArrowDirections = []
+                    }else{
+                        popoverController.sourceView = self.tableView
+                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    }
                 }
                 
                 self.present(alertController, animated: true, completion: nil)
@@ -242,8 +284,9 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 self.Firebase.selectedArticle = indexPath.row
                 dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                 dvc.tableView.reloadData()
+                           dvc.loadHeader()
                 dvc.ErrorMessages = []
-                self.navigationController?.pushViewController(dvc, animated: true)
+                self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
             }
         }else{
             Firebase.selectedArticle = indexPath.row
@@ -269,8 +312,15 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 
                 
                 if let popoverController = alertController.popoverPresentationController {
-                    popoverController.sourceView = self.tableView
-                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    
+                    if Firebase.selectedArticle == -1 {
+                        popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                        popoverController.permittedArrowDirections = []
+                    }else{
+                        popoverController.sourceView = self.tableView
+                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    }
                 }
                 
                 self.present(alertController, animated: true, completion: nil)
@@ -289,13 +339,15 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
                     let sections = NSIndexSet(indexesIn: range)
-                    dvc.tableView.reloadSections(sections as IndexSet, with: .automatic) 
+                    dvc.tableView.reloadSections(sections as IndexSet, with: .automatic)
+                               dvc.loadHeader()
                 }else if let dvc = self.lastSeguedToDetalhesViewController {
                     self.Firebase.selectedArticle = -1
                     
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
                     let sections = NSIndexSet(indexesIn: range)
-                    dvc.tableView.reloadSections(sections as IndexSet, with: .automatic) 
+                    dvc.tableView.reloadSections(sections as IndexSet, with: .automatic)
+                               dvc.loadHeader()
                 }
                 self.Firebase.removeArticle(at: indexPath.row)
             })

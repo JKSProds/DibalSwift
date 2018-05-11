@@ -73,7 +73,7 @@ struct Artigo {
         dateFormatter.dateFormat = "dd-MM-yy"
         let date = dateFormatter.date(from: string)
         dateFormatter.dateFormat = "yyMMdd"
-        return  dateFormatter.string(from: date!)
+        return  date != nil ? dateFormatter.string(from: date!) : ""
         
     }
     

@@ -15,12 +15,38 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     var Firebase: FirebaseCom!
     var artigo = Artigo()
     var ErrorMessages = [(id: String, message: String, texto: String)]()
-    var savedArticle = true
+    var savedArticle = true {didSet {
+        navigationItem.rightBarButtonItem?.isEnabled = !savedArticle
+        }
+    }
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if Firebase.list == nil {
+            Firebase.getAllFields(tableView: self.tableView)
+        }
+        loadHeader()
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Guardar", style: .done, target: self, action: #selector(saveArtigo))
+        savedArticle = true
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
+        
+    }
+    
+    func loadHeader() {
         if Firebase != nil {
             if Firebase.selectedArticle >= 0  {
                 artigo = Firebase.articles[Firebase.selectedArticle]
@@ -34,33 +60,18 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             }else{
                 navigationItem.title = "Novo Artigo"
             }
-            if Firebase.list == nil {
-            Firebase.getAllFields(tableView: self.tableView)
-            }
         }
-        
-        
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Guardar", style: .done, target: self, action: #selector(saveArtigo))
-    
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
-
+        savedArticle = true
     }
+
     
     override func viewWillDisappear(_ animated: Bool) {
+dismissKeyboard()
         if let nvc = self.splitViewController?.viewControllers.first as? UINavigationController, let mvc = nvc.viewControllers.first as? ArtigosViewController {
             mvc.saveArticle()
         }
     }
-   
+    
     // MARK: Keyboard Handling
     
     @objc func adjustForKeyboard(notification: Notification) {
@@ -104,23 +115,43 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 let alertController = UIAlertController(title: "Erro", message: "Esse artigo já existe! Não pode sobrepor artigos", preferredStyle: .actionSheet)
                 let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                 alertController.addAction(OKAction)
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                    
+                }
                 self.present(alertController, animated: true, completion: nil)
             }else if ErrorMessages.count > 0{
-                let alertController = UIAlertController(title: "Erro", message: ErrorMessages.first?.message, preferredStyle: .alert)
+                let alertController = UIAlertController(title: "Erro", message: ErrorMessages.first?.message, preferredStyle: .actionSheet)
                 let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                 alertController.addAction(OKAction)
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                    
+                }
                 self.present(alertController, animated: true, completion: nil)
             }else{
                 
                 Firebase.uploadArtigo(artigo: artigo)
                 Firebase.list.remove()
                 savedArticle = true
-                self.navigationController?.navigationController?.popViewController(animated: true)
+                
             }
         }else{
             let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(OKAction)
+            
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+                
+            }
+            
             self.present(alertController, animated: true, completion: nil)
         }
         
@@ -186,7 +217,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             let sections = NSIndexSet(indexesIn: range)
             self.tableView.reloadSections(sections as IndexSet, with: .automatic)
             
-             self.navigationController?.popToRootViewController(animated: true)
+            //self.navigationController?.popToRootViewController(animated: true)
         })
         let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
         alertController.addAction(CancelOption)
@@ -217,6 +248,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 self.artigo.campos["Cod_Articulo"] = codigoArtigo.text
                 self.Firebase.selectedArticle = -1
                 self.saveArtigo(self)
+                //self.navigationController?.popToRootViewController(animated: true)
             } else {
                 let errorAlert = UIAlertController(title: "Erro", message: "Por favor insira um valor válido!", preferredStyle: .actionSheet)
                 errorAlert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: {
@@ -228,7 +260,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                     popoverController.sourceView = self.view
                     popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
                     popoverController.permittedArrowDirections = []
-                     
+                    
                 }
                 
                 self.present(errorAlert, animated: true, completion: nil)
@@ -323,6 +355,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             }else{
                 cell.pickerView.viewControllerMaster = self
                 cell.pickerView.pickerData = field.campos
+                cell.pickerView.reloadAllComponents()
                 
                 let index = field.campos.index(where: {$0["valor"] as? String == artigo.campos[field.nome]})
                 if index != nil {
@@ -357,7 +390,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: Loads Section Headers
     
-
+    
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
