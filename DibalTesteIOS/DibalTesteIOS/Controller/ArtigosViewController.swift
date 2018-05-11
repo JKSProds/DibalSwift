@@ -19,6 +19,16 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     var Firebase = FirebaseCom(clientID: "20lcz9utjo0NKE84twgd")
     var Dibal = DibalCom()
     static var UIColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+    private var splitViewDetailArticleViewController: DetalheArtigoViewController?{
+        if let nvc = splitViewController?.viewControllers.last as? UINavigationController {
+            return nvc.viewControllers.first as? DetalheArtigoViewController
+        }else if let dvc = splitViewController?.viewControllers.last as? DetalheArtigoViewController {
+            return dvc
+        }
+        return nil
+        
+    }
+    private var lastSeguedToDetalhesViewController: DetalheArtigoViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,23 +50,24 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
         NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
         
-        if let detail: DetalheArtigoViewController = navigationController?.splitViewController?.viewControllers.last as? DetalheArtigoViewController {
+        if let detail = splitViewDetailArticleViewController {
+            
             detail.Firebase = self.Firebase
-            Firebase.getAllFields(tableView: detail.tableView)
+            
         }
-        
     }
     
     
-    @IBAction func clickAddArtigo(_ sender: Any) {
-        Firebase.selectedArticle = -1
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let nextView: DetalheArtigoViewController = segue.destination as! DetalheArtigoViewController
-        
-        nextView.Firebase = Firebase
-        
+        if segue.identifier == "DetalheArtigoSegue" {
+            if let destinationNavController: UINavigationController = segue.destination as? UINavigationController {
+                let detail: DetalheArtigoViewController! = destinationNavController.topViewController as! DetalheArtigoViewController
+                detail.Firebase = self.Firebase
+                lastSeguedToDetalhesViewController  = detail
+                
+            }
+        }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -77,18 +88,194 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["Precio"]!)
         
-        
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    @IBAction func AddArticle(_ sender: UIButton) {
         
+        if let dvc = splitViewDetailArticleViewController {
+            if !dvc.savedArticle {
+                let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
+                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                    dvc.saveArtigo(self)
+                    self.Firebase.selectedArticle = -1
+                    dvc.artigo = Artigo()
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                    
+                })
+                let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
+                    dvc.savedArticle = true
+                    self.Firebase.selectedArticle = -1
+                    dvc.artigo = Artigo()
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                })
+                alertController.addAction(CancelOption)
+                alertController.addAction(OKAction)
+                
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.tableView
+                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                }
+                
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                self.Firebase.selectedArticle = -1
+                dvc.artigo = Artigo()
+                dvc.tableView.reloadData()
+                dvc.ErrorMessages = []
+            }
+            
+        }else if let dvc = lastSeguedToDetalhesViewController{
+            if !dvc.savedArticle {
+                let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
+                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                    dvc.saveArtigo(self)
+                    
+                    self.Firebase.selectedArticle = -1
+                    dvc.artigo = Artigo()
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                    self.navigationController?.pushViewController(dvc, animated: true)
+                })
+                let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
+                    dvc.savedArticle = true
+                    self.Firebase.selectedArticle = -1
+                    dvc.artigo = Artigo()
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                    self.navigationController?.pushViewController(dvc, animated: true)
+                })
+                alertController.addAction(CancelOption)
+                alertController.addAction(OKAction)
+                
+                
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.tableView
+                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                }
+                
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                self.Firebase.selectedArticle = -1
+                dvc.artigo = Artigo()
+                dvc.tableView.reloadData()
+                dvc.ErrorMessages = []
+                navigationController?.pushViewController(dvc, animated: true)
+            }
+        }else{
+            self.performSegue(withIdentifier: "DetalheArtigoSegue", sender: self)
+        }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        Firebase.selectedArticle = indexPath.row
         
-        performSegue(withIdentifier: "DetalheArtigoSege", sender: self)
+        if let dvc = splitViewDetailArticleViewController {
+            if indexPath.row != Firebase.selectedArticle {
+                if !dvc.savedArticle {
+                    let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
+                    let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                        dvc.saveArtigo(self)
+                        self.Firebase.selectedArticle = indexPath.row
+                        dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                        dvc.tableView.reloadData()
+                        dvc.ErrorMessages = []
+                        
+                    })
+                    let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
+                        dvc.savedArticle = true
+                        self.Firebase.selectedArticle = indexPath.row
+                        dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                        dvc.tableView.reloadData()
+                        dvc.ErrorMessages = []
+                    })
+                    alertController.addAction(CancelOption)
+                    alertController.addAction(OKAction)
+                    
+                    if let popoverController = alertController.popoverPresentationController {
+                        popoverController.sourceView = self.tableView
+                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    }
+                    
+                    self.present(alertController, animated: true, completion: nil)
+                }else{
+                    self.Firebase.selectedArticle = indexPath.row
+                    dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                }
+            }
+        }else if let dvc = lastSeguedToDetalhesViewController{
+            if !dvc.savedArticle {
+                let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
+                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                    dvc.saveArtigo(self)
+                    
+                    self.Firebase.selectedArticle = indexPath.row
+                    dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                    self.navigationController?.pushViewController(dvc, animated: true)
+                })
+                let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
+                    dvc.savedArticle = true
+                    self.Firebase.selectedArticle = indexPath.row
+                    dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                    dvc.tableView.reloadData()
+                    dvc.ErrorMessages = []
+                    self.navigationController?.pushViewController(dvc, animated: true)
+                })
+                alertController.addAction(CancelOption)
+                alertController.addAction(OKAction)
+                
+                
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.tableView
+                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                }
+                
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                self.Firebase.selectedArticle = indexPath.row
+                dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                dvc.tableView.reloadData()
+                dvc.ErrorMessages = []
+                self.navigationController?.pushViewController(dvc, animated: true)
+            }
+        }else{
+            Firebase.selectedArticle = indexPath.row
+            self.performSegue(withIdentifier: "DetalheArtigoSegue", sender: self)
+        }
+        
+    }
+    
+    func saveArticle() {
+        if let dvc = lastSeguedToDetalhesViewController  {
+            if !dvc.savedArticle {
+                let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
+                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                    dvc.saveArtigo(self)
+                    
+                })
+                let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
+                    dvc.savedArticle = true
+                    
+                })
+                alertController.addAction(CancelOption)
+                alertController.addAction(OKAction)
+                
+                
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = self.tableView
+                    popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                }
+                
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -96,8 +283,14 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             let alertController = UIAlertController(title: "Remover Artigo", message: "Tem a certeza que deseja remover este artigo?", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "Sim", style: .destructive, handler: { alert -> Void in
                 
-                if let dvc = self.splitViewController?.viewControllers.last as? DetalheArtigoViewController {
+                if let dvc = self.splitViewDetailArticleViewController {
                     
+                    self.Firebase.selectedArticle = -1
+                    
+                    let range = NSMakeRange(0, self.tableView.numberOfSections)
+                    let sections = NSIndexSet(indexesIn: range)
+                    dvc.tableView.reloadSections(sections as IndexSet, with: .automatic) 
+                }else if let dvc = self.lastSeguedToDetalhesViewController {
                     self.Firebase.selectedArticle = -1
                     
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
@@ -109,6 +302,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
             alertController.addAction(OKAction)
+            
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = self.tableView
+                popoverController.sourceRect = self.tableView.rectForRow(at: indexPath)
+            }
+            
             self.present(alertController, animated: true, completion: nil)
             tableView.setEditing(false, animated: true)
             
@@ -126,6 +325,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
             alertController.addAction(OKAction)
+            
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = self.tableView
+                popoverController.sourceRect = self.tableView.rectForRow(at: indexPath)
+            }
+            
             self.present(alertController, animated: true, completion: nil)
             tableView.setEditing(false, animated: true)
             

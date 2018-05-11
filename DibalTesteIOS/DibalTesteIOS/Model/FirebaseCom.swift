@@ -142,6 +142,15 @@ class FirebaseCom {
                 if stringDouble == nil  {
                     res = "Valor não é um valor de peso!"
                 }
+            case 6:
+                if Artigo.dateConverter(string: string) == nil {
+                    return "O valor inserido não é uma data!"
+                }
+            case 5:
+                let stringDouble = Float(string)
+                if stringDouble == nil {
+                    res = "Valor não é uma percentagem!"
+                }
             default:
                 res = ""
             }
@@ -150,6 +159,28 @@ class FirebaseCom {
         return res
     }
     
+    func formatArticleField(at field: field, string: String) -> String {
+        var res = ""
+        
+        
+            
+            // 0 - Inteiro | 1 - Preço | 2 - Peso | 3 - String | 4 - Combobox | 5 - Percentagem | 6 - Data
+            switch field.tipo {
+            case 1:
+              return Artigo.currencyConverterwithoutSymbol(string: string)
+            case 2:
+               return Artigo.weightConverter(string: string)
+                
+            case 5:
+                return Artigo.percentConverter(string: string)
+            case 6:
+                return Artigo.dateConverter(string: string)!
+            default:
+                res = ""
+            }
+
+        return res
+    }
     
     func uploadArtigo(artigo: Artigo) {
         var docID: String = ""
@@ -328,7 +359,7 @@ class FirebaseCom {
                 if (doc.value as? Int)! == 4 {
                     existsArrayofFields = true
                 }
-                if (doc.value as? Int)! > 4 {
+                if (doc.value as? Int)! > 6 {
                     return false
                 }
                 intCampos += 1

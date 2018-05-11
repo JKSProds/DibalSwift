@@ -20,7 +20,6 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Guardar", style: .done, target: self, action: #selector(saveArtigo))
         super.viewDidLoad()
         if Firebase != nil {
             if Firebase.selectedArticle >= 0  {
@@ -35,7 +34,9 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             }else{
                 navigationItem.title = "Novo Artigo"
             }
-            
+            if Firebase.list == nil {
+            Firebase.getAllFields(tableView: self.tableView)
+            }
         }
         
         
@@ -43,53 +44,24 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Guardar", style: .done, target: self, action: #selector(saveArtigo))
+    
         tableView.delegate = self
         tableView.dataSource = self
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
-        
-        
-        //Firebase.setAllExpanded()
-        
-        
-        
+
     }
     
-    
-    // MARK: Handling switching between articles so that it saves.
-    override func willMove(toParentViewController parent: UIViewController?)
-    {
-        
-        super.willMove(toParentViewController: parent)
-        
-        if parent == nil
-        {
-            if !self.savedArticle  {
-                
-                
-                let alertController = UIAlertController(title: "Guarda Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .alert)
-                
-                
-                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
-                    self.saveArtigo(self)
-                    
-                    
-                })
-                let CancelOption = UIAlertAction(title: "Não", style: .cancel, handler: nil)
-                alertController.addAction(CancelOption)
-                alertController.addAction(OKAction)
-                
-                self.present(alertController, animated: true, completion: nil)
-                
-                
-            }
-            
+    override func viewWillDisappear(_ animated: Bool) {
+        if let nvc = self.splitViewController?.viewControllers.first as? UINavigationController, let mvc = nvc.viewControllers.first as? ArtigosViewController {
+            mvc.saveArticle()
         }
     }
-    
-    // MARK: Keyboar Handling
+   
+    // MARK: Keyboard Handling
     
     @objc func adjustForKeyboard(notification: Notification) {
         let userInfo = notification.userInfo!
@@ -143,7 +115,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 Firebase.uploadArtigo(artigo: artigo)
                 Firebase.list.remove()
                 savedArticle = true
-                self.navigationController?.popToRootViewController(animated: true)
+                self.navigationController?.navigationController?.popViewController(animated: true)
             }
         }else{
             let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .actionSheet)
@@ -168,10 +140,14 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
         let mensagem = Firebase.checkArticleField(at: campoAtual, string: sender.text!)
         
         if  mensagem == "" {
+            sender.text = Firebase.formatArticleField(at: campoAtual, string: sender.text!)
             if artigo.campos[sender.accessibilityIdentifier!] != sender.text {
                 savedArticle = false
             }
             artigo.campos[sender.accessibilityIdentifier!] = sender.text
+            if campoAtual.tipo == 6 {
+                sender.text = Artigo.dateConverterVisualy(string: sender.text!)
+            }
             sender.errorMessage = mensagem
             let indexErro = ErrorMessages.index(where: {($0.id == sender.accessibilityIdentifier)})
             if indexErro != nil {
@@ -209,11 +185,20 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             let range = NSMakeRange(0, self.tableView.numberOfSections)
             let sections = NSIndexSet(indexesIn: range)
             self.tableView.reloadSections(sections as IndexSet, with: .automatic)
+            
              self.navigationController?.popToRootViewController(animated: true)
         })
         let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
         alertController.addAction(CancelOption)
         alertController.addAction(OKAction)
+        
+        if let popoverController = alertController.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+            
+        }
+        
         self.present(alertController, animated: true, completion: nil)
         
     }
@@ -238,6 +223,14 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                     alert -> Void in
                     self.present(alertController, animated: true, completion: nil)
                 }))
+                
+                if let popoverController = errorAlert.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                     
+                }
+                
                 self.present(errorAlert, animated: true, completion: nil)
             }
             
@@ -289,8 +282,12 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             cell.titleLabel = field.descricao
             cell.fieldNome = field.nome
             
-            if Firebase.selectedArticle >= 0, artigo.campos[field.nome] != nil {
-                cell.fieldText = "\(artigo.campos[field.nome]!)"
+            if Firebase.selectedArticle >= 0, artigo.campos[field.nome] != nil, artigo.campos[field.nome] != "" {
+                if field.tipo == 6 {
+                    cell.fieldText = Artigo.dateConverterVisualy(string: "\(artigo.campos[field.nome]!)")!
+                }else{
+                    cell.fieldText = "\(artigo.campos[field.nome]!)"
+                }
             }else{
                 cell.fieldText = field.def
             }
@@ -426,7 +423,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
     
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return Firebase.headers.count
+        return  Firebase.headers.count
     }
     
     // MARK: Handle Section Button
