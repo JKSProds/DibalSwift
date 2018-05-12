@@ -66,7 +66,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
 
     
     override func viewWillDisappear(_ animated: Bool) {
-dismissKeyboard()
+        dismissKeyboard()
         if let nvc = self.splitViewController?.viewControllers.first as? UINavigationController, let mvc = nvc.viewControllers.first as? ArtigosViewController {
             mvc.saveArticle()
         }
@@ -136,7 +136,7 @@ dismissKeyboard()
             }else{
                 
                 Firebase.uploadArtigo(artigo: artigo)
-                Firebase.list.remove()
+                //Firebase.list.remove()
                 savedArticle = true
                 
             }
@@ -212,6 +212,7 @@ dismissKeyboard()
             self.Firebase.removeArticle(at: self.Firebase.selectedArticle)
             
             self.Firebase.selectedArticle = -1
+            self.artigo = Artigo()
             
             let range = NSMakeRange(0, self.tableView.numberOfSections)
             let sections = NSIndexSet(indexesIn: range)
@@ -248,6 +249,8 @@ dismissKeyboard()
                 self.artigo.campos["Cod_Articulo"] = codigoArtigo.text
                 self.Firebase.selectedArticle = -1
                 self.saveArtigo(self)
+                self.artigo = Artigo()
+                self.tableView.reloadData()
                 //self.navigationController?.popToRootViewController(animated: true)
             } else {
                 let errorAlert = UIAlertController(title: "Erro", message: "Por favor insira um valor válido!", preferredStyle: .actionSheet)

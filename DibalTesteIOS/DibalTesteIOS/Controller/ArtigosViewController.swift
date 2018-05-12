@@ -336,6 +336,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 if let dvc = self.splitViewDetailArticleViewController {
                     
                     self.Firebase.selectedArticle = -1
+                    dvc.artigo = Artigo()
                     
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
                     let sections = NSIndexSet(indexesIn: range)
@@ -343,6 +344,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                                dvc.loadHeader()
                 }else if let dvc = self.lastSeguedToDetalhesViewController {
                     self.Firebase.selectedArticle = -1
+                    dvc.artigo = Artigo()
                     
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
                     let sections = NSIndexSet(indexesIn: range)
