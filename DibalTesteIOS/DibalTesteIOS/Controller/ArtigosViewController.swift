@@ -389,12 +389,62 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             tableView.setEditing(false, animated: true)
             
         }
-        
-        tableView.setEditing(false, animated: true)
+
         start.image = #imageLiteral(resourceName: "play")
         start.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
-        return UISwipeActionsConfiguration(actions: [start])
+        
+        let send = UIContextualAction(style: .normal, title: "Enviar") { (action, view, nil) in
+            let alertController = UIAlertController(title: "Enviar Artigo", message: "Tem a certeza que deseja enviar este artigo?", preferredStyle: .actionSheet)
+            let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                self.Dibal.sendArticle(article: self.Firebase.articles[indexPath.row]) })
+            let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
+            alertController.addAction(CancelOption)
+            alertController.addAction(OKAction)
+            
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = self.tableView
+                popoverController.sourceRect = self.tableView.rectForRow(at: indexPath)
+            }
+            
+            self.present(alertController, animated: true, completion: nil)
+            tableView.setEditing(false, animated: true)
+            
+        }
+        
+        send.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        
+        tableView.setEditing(false, animated: true)
+        
+        return UISwipeActionsConfiguration(actions: [start, send])
     }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
