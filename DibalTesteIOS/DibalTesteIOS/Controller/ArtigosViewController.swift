@@ -13,8 +13,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var lblHeader: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var NovoArtigoButton: UIButton!
+    @IBOutlet weak var lblFilter: UILabel!
     
+    @IBOutlet weak var bottonConstraint: NSLayoutConstraint!
     
+    let searchController = UISearchController(searchResultsController: nil)
+    var filteredArticles = [Artigo]()
     
     var Firebase = FirebaseCom(clientID: "20lcz9utjo0NKE84twgd")
     var Dibal = DibalCom()
@@ -30,6 +34,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         return nil
         
     }
+    
     private var lastSeguedToDetalhesViewController: DetalheArtigoViewController?
     
     override func viewDidLoad() {
@@ -50,6 +55,8 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
+        lblFilter.layer.masksToBounds = true
+        lblFilter.layer.cornerRadius = lblFilter.layer.frame.height / 2
         //NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
         
         if let detail = splitViewDetailArticleViewController {
@@ -57,8 +64,32 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             detail.Firebase = self.Firebase
             
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Pesquisa"
+
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+        
+        searchController.searchBar.scopeButtonTitles = ["Código", "Nome", "Preço"]
+        searchController.searchBar.delegate = self
+
+        
+        //navigationItem.hidesSearchBarWhenScrolling = true
     }
     
+    @objc func keyboardWillShow(_ notification:Notification) {
+    let userInfo:NSDictionary = (notification as NSNotification).userInfo! as NSDictionary
+    let keyboardFrame:NSValue = userInfo.value(forKey: UIKeyboardFrameEndUserInfoKey) as! NSValue
+    let keyboardRectangle = keyboardFrame.cgRectValue
+    let keyboardHeight = keyboardRectangle.height - 20
+    // controlBottomConstraint outlet to the control you want to move up
+    bottonConstraint.constant = keyboardHeight
+    }
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -73,6 +104,11 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isFiltering() {
+            setIsFilteringToShow(filteredItemCount: filteredArticles.count, of: Firebase.articles.count)
+            return filteredArticles.count
+        }
+        setNotFiltering()
         return Firebase.articles.count
     }
     
@@ -81,14 +117,21 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customCell") as! ListaArtigosTableViewCell
+        var artigo = Artigo()
+        
+        if isFiltering() {
+            artigo = filteredArticles[indexPath.row]
+        } else {
+            artigo = Firebase.articles[indexPath.row]
+        }
         
         cell.cellView.layer.cornerRadius = cell.cellView.frame.height / 2
         cell.cellView.backgroundColor = ArtigosViewController.UIColor
         
-        cell.lblCodigo.text = Firebase.articles[indexPath.row].campos["Cod_Articulo"]!
-        cell.lblDenominacao.text = Firebase.articles[indexPath.row].campos["Nombre"]!
+        cell.lblCodigo.text = artigo.campos["Cod_Articulo"]!
+        cell.lblDenominacao.text = artigo.campos["Nombre"]!
         
-        cell.lblPreco.text = Artigo.currencyConverter(string: Firebase.articles[indexPath.row].campos["Precio"]!)
+        cell.lblPreco.text = Artigo.currencyConverter(string: artigo.campos["Precio"]!)
         
         return cell
     }
@@ -197,12 +240,16 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         
         if let dvc = splitViewDetailArticleViewController {
-            if indexPath.row != Firebase.selectedArticle {
+           
                 if !dvc.savedArticle {
                     let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
                     let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
                         dvc.saveArtigo(self)
-                        self.Firebase.selectedArticle = indexPath.row
+                        if self.isFiltering() {
+                            self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                        } else {
+                            self.Firebase.selectedArticle = indexPath.row
+                        }
                         dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                         dvc.tableView.reloadData()
                                    dvc.loadHeader()
@@ -234,20 +281,29 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                     self.present(alertController, animated: true, completion: nil)
                 }else{
-                    self.Firebase.selectedArticle = indexPath.row
+                    if self.isFiltering() {
+                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                    } else {
+                        self.Firebase.selectedArticle = indexPath.row
+                    }
+
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
                                dvc.loadHeader()
                     dvc.ErrorMessages = []
                 }
-            }
         }else if let dvc = lastSeguedToDetalhesViewController{
             if !dvc.savedArticle {
                 let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
                 let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
                     dvc.saveArtigo(self)
                     
-                    self.Firebase.selectedArticle = indexPath.row
+                    if self.isFiltering() {
+                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                    } else {
+                        self.Firebase.selectedArticle = indexPath.row
+                    }
+
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
                                dvc.loadHeader()
@@ -256,7 +312,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 })
                 let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
                     dvc.savedArticle = true
-                    self.Firebase.selectedArticle = indexPath.row
+                    if self.isFiltering() {
+                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                    } else {
+                        self.Firebase.selectedArticle = indexPath.row
+                    }
+
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
                                dvc.loadHeader()
@@ -281,7 +342,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 
                 self.present(alertController, animated: true, completion: nil)
             }else{
-                self.Firebase.selectedArticle = indexPath.row
+                if self.isFiltering() {
+                    self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                } else {
+                    self.Firebase.selectedArticle = indexPath.row
+                }
+
                 dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                 dvc.tableView.reloadData()
                            dvc.loadHeader()
@@ -289,7 +355,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
             }
         }else{
-            Firebase.selectedArticle = indexPath.row
+            if self.isFiltering() {
+                self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+            } else {
+                self.Firebase.selectedArticle = indexPath.row
+            }
+
             self.performSegue(withIdentifier: "DetalheArtigoSegue", sender: self)
         }
         
@@ -420,6 +491,84 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     
 }
 
+extension ArtigosViewController: UISearchResultsUpdating, UISearchBarDelegate {
+    // MARK: - UISearchResultsUpdating Delegate
+    func updateSearchResults(for searchController: UISearchController) {
+        let searchBar = searchController.searchBar
+        let scope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
+        filterContentForSearchText(searchController.searchBar.text!, scope: scope)
+    }
+    
+    func searchBarIsEmpty() -> Bool {
+        // Returns true if the text is empty or nil
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        if scope == "Código" {
+            filteredArticles = Firebase.articles.filter({( article : Artigo) -> Bool in
+                return (article.campos["Cod_Articulo"]?.lowercased().contains(searchText.lowercased()))!
+            })
+        }else if scope == "Nome" {
+            filteredArticles = Firebase.articles.filter({( article : Artigo) -> Bool in
+                return (article.campos["Nombre"]?.lowercased().contains(searchText.lowercased()))!
+            })
+        }else if scope == "Preço" {
+            filteredArticles = Firebase.articles.filter({( article : Artigo) -> Bool in
+                return (article.campos["Precio"]?.lowercased().contains(searchText.lowercased()))!
+            })
+        }
+      
+        tableView.reloadData()
+    }
+    
+    func isFiltering() -> Bool {
+        return searchController.isActive && !searchBarIsEmpty()
+    }
+    
+    func getIndexByCodigo (codigo: String) -> Int {
+        
+        if let index = Firebase.articles.index(where: {$0.campos["Cod_Articulo"] == codigo}) {
+            return index
+        }
+        
+        return -1
+    }
+    
+    // MARK: - UISearchBar Delegate
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+    }
+    
+    func setIsFilteringToShow(filteredItemCount: Int, of: Int) {
+        lblFilter.fadeIn(duration: 0.35, delay: 0, completion:{_ in })
+        if filteredItemCount > 0 {
+        lblFilter.text = "A Filtrar \(filteredItemCount) de \(of)"
+        }else{
+            lblFilter.text = "Nenhum artigo encontrado!"
+        }
+    }
+    
+    func setNotFiltering() {
+      lblFilter.fadeOut(duration: 0.35, delay: 0, completion: {_ in})
+    }
+}
+
+
+extension UIView {
+    
+    
+    func fadeIn(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
+        UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
+            self.alpha = 1.0
+        }, completion: completion)  }
+    
+    func fadeOut(duration: TimeInterval = 1.0, delay: TimeInterval = 3.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+        UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
+            self.alpha = 0.0
+        }, completion: completion)
+    }
+}
 
 
 

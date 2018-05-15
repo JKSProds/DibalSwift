@@ -61,13 +61,22 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Configuração" image="settings" id="57p-fe-6Xq"/>
                     <connections>
+                        <outlet property="searchDisplayController" destination="Etk-9o-p3H" id="kSA-Ye-gHA"/>
                         <outlet property="txtIP" destination="VlV-hG-RuE" id="aXu-0R-OfI"/>
                         <outlet property="txtPorta" destination="dO1-sS-8r9" id="tLM-qP-8z1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fZy-x0-U69" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="Etk-9o-p3H">
+                    <connections>
+                        <outlet property="delegate" destination="IdI-7H-eWj" id="zxo-qE-Sbu"/>
+                        <outlet property="searchContentsController" destination="IdI-7H-eWj" id="zV0-xj-oOY"/>
+                        <outlet property="searchResultsDataSource" destination="IdI-7H-eWj" id="pZy-eM-Qsb"/>
+                        <outlet property="searchResultsDelegate" destination="IdI-7H-eWj" id="LKY-Lo-6AS"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="796" y="536"/>
+            <point key="canvasLocation" x="795.6521739130435" y="535.59782608695662"/>
         </scene>
         <!--Lista Artigos-->
         <scene sceneID="Hi8-Oi-LuJ">
@@ -140,6 +149,16 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9g4-1n-3NA">
+                                <rect key="frame" x="8" y="613" width="398" height="58"/>
+                                <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="58" id="h6z-gQ-78N"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fdg-Cb-UxB">
                                 <rect key="frame" x="340" y="613" width="58" height="58"/>
                                 <color key="backgroundColor" red="1" green="0.60319388780000005" blue="0.083098821650000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -159,14 +178,19 @@
                             <constraint firstItem="vCM-GA-TnM" firstAttribute="trailing" secondItem="fdg-Cb-UxB" secondAttribute="trailing" constant="16" id="OVS-G0-T9u"/>
                             <constraint firstItem="Min-EG-CG1" firstAttribute="top" secondItem="vCM-GA-TnM" secondAttribute="top" id="R07-wU-vjU"/>
                             <constraint firstItem="Min-EG-CG1" firstAttribute="trailing" secondItem="vCM-GA-TnM" secondAttribute="trailing" id="S3J-bu-suW"/>
+                            <constraint firstItem="vCM-GA-TnM" firstAttribute="bottom" secondItem="9g4-1n-3NA" secondAttribute="bottom" constant="16" id="Wzb-JN-xiS"/>
                             <constraint firstItem="vCM-GA-TnM" firstAttribute="bottom" secondItem="fdg-Cb-UxB" secondAttribute="bottom" constant="16" id="ZOJ-eG-mzH"/>
+                            <constraint firstItem="9g4-1n-3NA" firstAttribute="leading" secondItem="vCM-GA-TnM" secondAttribute="leading" constant="8" id="Zpl-Bd-pJz"/>
                             <constraint firstItem="fdg-Cb-UxB" firstAttribute="top" secondItem="Min-EG-CG1" secondAttribute="bottom" constant="-74" id="haV-wf-Tyi"/>
+                            <constraint firstItem="vCM-GA-TnM" firstAttribute="trailing" secondItem="9g4-1n-3NA" secondAttribute="trailing" constant="8" id="k2M-1h-bMk"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="vCM-GA-TnM"/>
                     </view>
                     <navigationItem key="navigationItem" title="CLIENT_NAME" id="rwo-Xg-2xM"/>
                     <connections>
                         <outlet property="NovoArtigoButton" destination="fdg-Cb-UxB" id="koN-0v-aCA"/>
+                        <outlet property="bottonConstraint" destination="Wzb-JN-xiS" id="yhA-Ce-PaK"/>
+                        <outlet property="lblFilter" destination="9g4-1n-3NA" id="xVU-5L-OJ4"/>
                         <outlet property="lblHeader" destination="rwo-Xg-2xM" id="J2w-0D-2ff"/>
                         <outlet property="tableView" destination="Min-EG-CG1" id="1ya-gG-fJr"/>
                         <segue destination="rh7-6r-Ywd" kind="showDetail" identifier="DetalheArtigoSegue" id="i2B-pY-Gdf"/>
@@ -174,7 +198,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PbB-Rb-fbw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2490" y="-1065"/>
+            <point key="canvasLocation" x="2489.8550724637685" y="-1065.4891304347827"/>
         </scene>
         <!--Detalhes Artigo-->
         <scene sceneID="P1o-qT-VMT">

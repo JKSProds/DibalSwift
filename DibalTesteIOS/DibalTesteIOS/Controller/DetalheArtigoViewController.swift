@@ -139,6 +139,13 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 //Firebase.list.remove()
                 savedArticle = true
                 
+                if Firebase.selectedArticle == -1 {
+                    artigo = Artigo()
+                    tableView.reloadData()
+                    
+                }
+                
+                loadHeader()
             }
         }else{
             let alertController = UIAlertController(title: "Erro", message: "O codigo do Artigo está incorreto. Por favor corriga o codigo e tente novamente!", preferredStyle: .actionSheet)
@@ -218,6 +225,8 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
             let sections = NSIndexSet(indexesIn: range)
             self.tableView.reloadSections(sections as IndexSet, with: .automatic)
             
+            self.loadHeader()
+            
             //self.navigationController?.popToRootViewController(animated: true)
         })
         let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
@@ -251,6 +260,7 @@ class DetalheArtigoViewController: UIViewController, UITableViewDelegate, UITabl
                 self.saveArtigo(self)
                 self.artigo = Artigo()
                 self.tableView.reloadData()
+                self.loadHeader()
                 //self.navigationController?.popToRootViewController(animated: true)
             } else {
                 let errorAlert = UIAlertController(title: "Erro", message: "Por favor insira um valor válido!", preferredStyle: .actionSheet)
