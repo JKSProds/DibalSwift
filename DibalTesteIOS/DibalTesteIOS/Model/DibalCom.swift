@@ -18,34 +18,39 @@ class DibalCom {
         TX_Port = 3001
     }
     
-    private func sendData(data: String) {
+    private func sendData(data: String) -> Bool {
         let client = TCPClient(address: IP_Adress, port: TX_Port)
         switch client.connect(timeout: 1) {
         case .success:
             switch client.send(string: data) {
             case .success:
                 
-                guard let data = client.read(1024*10) else { return }
+                guard let data = client.read(1024*10) else { return true }
                 
                 if let response = String(bytes: data, encoding: .utf8) {
                     print(response)
                 }
+                client.close()
+                return true
             case .failure(let error):
                 print(error)
+                client.close()
+                return false
             }
         case .failure(let error):
             print(error)
+            client.close()
+            return false
         }
-        client.close()
     }
     
-    private func register4A(article: Artigo) {
+    private func register4A(article: Artigo) -> Bool {
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         
-        sendData(data: "\(Constants.ID)4A\(Constants.Grupo)0\(codArticle)" )
+        return sendData(data: "\(Constants.ID)4A\(Constants.Grupo)0\(codArticle)" )
     }
     
-    private func registerL2(article: Artigo) {
+    private func registerL2(article: Artigo) -> Bool {
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         
         // Check codigo rapido. Se for zeros substitui para apagar tecla direta
@@ -62,11 +67,11 @@ class DibalCom {
         let precoCusto = Artigo.leadingZeros(numberOf: 8, for: article.campos["Precio_Costo"]!.replacingOccurrences(of: ".", with: "", options: .literal, range: nil))
         let libres = Artigo.leadingZeros(numberOf: 18, for: "0")
         
-        sendData(data: "\(Constants.ID)L2\(Constants.Grupo)M\(codArticle)\(codRapido)\(nome1!)\(nome2!)\(nome3!)\(preco)\(precoOferta)\(precoCusto)\(libres)")
+         return sendData(data: "\(Constants.ID)L2\(Constants.Grupo)M\(codArticle)\(codRapido)\(nome1!)\(nome2!)\(nome3!)\(preco)\(precoOferta)\(precoCusto)\(libres)")
         
     }
 
-    private func registerL3(article: Artigo) {
+    private func registerL3(article: Artigo) -> Bool {
 
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         let tipo = Artigo.leadingZeros(numberOf: 1, for: article.campos["Tipo"]!)
@@ -110,10 +115,10 @@ class DibalCom {
         let controlSoloTotais = Constants.CONTROL_SOLO_TOTAIS
         let libres = Artigo.leadingZeros(numberOf: 2, for: "0")
         
-        sendData(data: "\(Constants.ID)L3\(Constants.Grupo)\(codArticle)\(tipo)\(validade)\(fechaExtra)\(fechaEnvasado)\(tara)\(taraPercentual)\(formatoEtiqueta)\(formatoEAN13)\(formatoEAN128)\(seccao)\(iva)\(smiley)\(codClasse)\(String(codLote.dropFirst(1)))\(receitaLXXX)\(logoLXXX)\(departamento)\(rastreabilidade)\(receitaLP)\(conservarcaoLP)\(pesoPeça)\(posicaoDecimal)\(String(nivel1.dropFirst(1)))\(nivel2)\(nivel3)\(umbralTrigger)\(tempoEstabelecido)\(tempoMedida)\(velocidadeCintas)\(centrado)\(glaseado)\(pesoMinimo)\(pesoMaximo)\(String(codLote.first!))\(formatoEAN2)\(controlCoccion)\(tempoCoccion)\(tempoFixo)\(soloTotais)\(controlSoloTotais)\(String(nivel1.first!))\(libres)")
+        return sendData(data: "\(Constants.ID)L3\(Constants.Grupo)\(codArticle)\(tipo)\(validade)\(fechaExtra)\(fechaEnvasado)\(tara)\(taraPercentual)\(formatoEtiqueta)\(formatoEAN13)\(formatoEAN128)\(seccao)\(iva)\(smiley)\(codClasse)\(String(codLote.dropFirst(1)))\(receitaLXXX)\(logoLXXX)\(departamento)\(rastreabilidade)\(receitaLP)\(conservarcaoLP)\(pesoPeça)\(posicaoDecimal)\(String(nivel1.dropFirst(1)))\(nivel2)\(nivel3)\(umbralTrigger)\(tempoEstabelecido)\(tempoMedida)\(velocidadeCintas)\(centrado)\(glaseado)\(pesoMinimo)\(pesoMaximo)\(String(codLote.first!))\(formatoEAN2)\(controlCoccion)\(tempoCoccion)\(tempoFixo)\(soloTotais)\(controlSoloTotais)\(String(nivel1.first!))\(libres)")
     }
     
-    private func registerTA(article: Artigo) {
+    private func registerTA(article: Artigo) -> Bool {
         
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         let formatoTotais = Artigo.leadingZeros(numberOf: 3, for: article.campos["FormatoTotales"]!)
@@ -152,10 +157,10 @@ class DibalCom {
         let frenoAplicadorPLU = Constants.FRENO_APLICADOR
         let libres = Artigo.leadingZeros(numberOf: 35, for: "0")
         
-        sendData(data: "\(Constants.ID)TA\(Constants.Grupo)\(codArticle)\(String(formatoTotais.dropFirst(1)))\(String(formatoNivel1.dropFirst(1)))\(String(formatoNivel2.dropFirst(1)))\(String(formatoNivel3.dropFirst(1)))\(controlLongitude)\(longitude)\(controlCentrado)\(centradoE1)\(centradoE2)\(minimoON)\(minimoOFF)\(paqueteMin)\(controlMinimos)\(controlEmbalagem)\(pesoEmbalagem)\(controlFormatosCentena)\(String(formatoEtiqueta.first!))\(String(formatoTotais.first!))\(String(formatoNivel1.first!))\(String(formatoNivel2.first!))\(String(formatoNivel3.first!))\(controlPrecio2)\(precio2)\(controlDiscriminador)\(centradoDiscriminador1)\(centradoDiscriminador2)\(centradoDiscriminador3)\(controlSeparaCinta)\(centradoCinta1)\(esperaCinta1)\(controlLogoCentenas)\(String(logo1.first!))\(String(logo2.first!))\(String(logo3.first!))\(String(logo4.first!))\(String(logo5.first!))\(controlFrenoAplicador)\(frenoAplicadorPLU)\(libres)")
+        return sendData(data: "\(Constants.ID)TA\(Constants.Grupo)\(codArticle)\(String(formatoTotais.dropFirst(1)))\(String(formatoNivel1.dropFirst(1)))\(String(formatoNivel2.dropFirst(1)))\(String(formatoNivel3.dropFirst(1)))\(controlLongitude)\(longitude)\(controlCentrado)\(centradoE1)\(centradoE2)\(minimoON)\(minimoOFF)\(paqueteMin)\(controlMinimos)\(controlEmbalagem)\(pesoEmbalagem)\(controlFormatosCentena)\(String(formatoEtiqueta.first!))\(String(formatoTotais.first!))\(String(formatoNivel1.first!))\(String(formatoNivel2.first!))\(String(formatoNivel3.first!))\(controlPrecio2)\(precio2)\(controlDiscriminador)\(centradoDiscriminador1)\(centradoDiscriminador2)\(centradoDiscriminador3)\(controlSeparaCinta)\(centradoCinta1)\(esperaCinta1)\(controlLogoCentenas)\(String(logo1.first!))\(String(logo2.first!))\(String(logo3.first!))\(String(logo4.first!))\(String(logo5.first!))\(controlFrenoAplicador)\(frenoAplicadorPLU)\(libres)")
     }
     
-    private func registerMG(article: Artigo) {
+    private func registerMG(article: Artigo) -> Bool {
         
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         let controlStock = Artigo.leadingZeros(numberOf: 1, for: article.campos["ControlStock"]!)
@@ -197,10 +202,11 @@ class DibalCom {
         let controlFormatoEscrava = Constants.CONTROL_FORMATOS_ESCRAVAS_CENTENAS
         
         
-        sendData(data: "\(Constants.ID)MG\(Constants.Grupo)\(codArticle)\(controlStock)\(etiquetasStock)\(pesoStock)\(numeroLote!)\(controlFormatos)\(formatoFechaEnvasado)\(formatoFechaValidade)\(formatoFechaExtra)\(formatoFecha)\(controlClassificacao)\(classificacao0)\(saida0)\(classificacao1)\(saida1)\(classificacao2)\(saida2)\(classificacao3)\(saida3)\(controlSimbolos)\(simboloPeso)\(simboloPreço)\(simboloImporte)\(totalPesoNivel1)\(margemPeso)\(controlLogos)\(logo1)\(logo2)\(logo3)\(logo4)\(logo5)\(formatoFechaConsumo)\(controlFormatoFechaConsumo)\(controlMulticabecal)\(modoEquipoMulticabecal)\(String(formatoEtiquetaE1.dropFirst(1)))\(String(formatoEtiquetaE2.dropFirst(1)))\(controlFormatoEscrava)\(String(formatoEtiquetaE1.first!))\(String(formatoEtiquetaE2.first!))")
+        return sendData(data: "\(Constants.ID)MG\(Constants.Grupo)\(codArticle)\(controlStock)\(etiquetasStock)\(pesoStock)\(numeroLote!)\(controlFormatos)\(formatoFechaEnvasado)\(formatoFechaValidade)\(formatoFechaExtra)\(formatoFecha)\(controlClassificacao)\(classificacao0)\(saida0)\(classificacao1)\(saida1)\(classificacao2)\(saida2)\(classificacao3)\(saida3)\(controlSimbolos)\(simboloPeso)\(simboloPreço)\(simboloImporte)\(totalPesoNivel1)\(margemPeso)\(controlLogos)\(logo1)\(logo2)\(logo3)\(logo4)\(logo5)\(formatoFechaConsumo)\(controlFormatoFechaConsumo)\(controlMulticabecal)\(modoEquipoMulticabecal)\(String(formatoEtiquetaE1.dropFirst(1)))\(String(formatoEtiquetaE2.dropFirst(1)))\(controlFormatoEscrava)\(String(formatoEtiquetaE1.first!))\(String(formatoEtiquetaE2.first!))")
     }
     
-    private func registerL4 (article: Artigo) {
+    private func registerL4 (article: Artigo) -> Bool {
+        var res = true
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         let libres =  Artigo.leadingZeros(numberOf: 14, for: "0")
         
@@ -209,14 +215,16 @@ class DibalCom {
             let texto1 = article.campos["Texto\(index*2+1)"]?.padding(toLength: 24, withPad: " ", startingAt: 0).spaceBetweenChar()
             let texto2 = article.campos["Texto\(index*2+2)"]?.padding(toLength: 24, withPad: " ", startingAt: 0).spaceBetweenChar()
             
-            sendData(data: "\(Constants.ID)L4\(Constants.Grupo)\(codArticle)\(index*2)\(texto1!)\(codArticle)\(index*2+1)\(texto2!)\(libres)")
+            if !sendData(data: "\(Constants.ID)L4\(Constants.Grupo)\(codArticle)\(index*2)\(texto1!)\(codArticle)\(index*2+1)\(texto2!)\(libres)") {
+                res = false
+            }
             
         }
-        
+        return res
     }
     
-    private func registerX4(article: Artigo) {
-        
+    private func registerX4(article: Artigo) -> Bool {
+        var res = true
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         let textoG = article.campos["TextoG"]!
         
@@ -226,15 +234,20 @@ class DibalCom {
             for index in 1...textosSeparados.count {
                 let codigoTexto = Artigo.leadingZeros(numberOf: 2, for: String(index))
                 let texto = textosSeparados[index-1].padding(toLength: 115, withPad: " ", startingAt: 0)
-                sendData(data: "\(Constants.ID)X4\(Constants.Grupo)\(codArticle)\(codigoTexto)\(texto)")
+                if !sendData(data: "\(Constants.ID)X4\(Constants.Grupo)\(codArticle)\(codigoTexto)\(texto)") {
+                    res = false
+                }
             }
         }else{
-             sendData(data: "\(Constants.ID)X4\(Constants.Grupo)\(codArticle)01\(textoG.padding(toLength: 115, withPad: " ", startingAt: 0))")
+            if !sendData(data: "\(Constants.ID)X4\(Constants.Grupo)\(codArticle)01\(textoG.padding(toLength: 115, withPad: " ", startingAt: 0))") {
+                res = false
+            }
         }
-        
+        return res
     }
     
-    private func registerTG(article: Artigo) {
+    private func registerTG(article: Artigo) -> Bool {
+        var res = true
         let codArticle = Artigo.leadingZeros(numberOf: 6, for: article.campos["Cod_Articulo"]!)
         
         for index in 12...30 {
@@ -246,39 +259,49 @@ class DibalCom {
                 for indexTexto in 1...textosSeparados.count {
                     let codigoTexto = Artigo.leadingZeros(numberOf: 2, for: String(indexTexto))
                     let texto = textosSeparados[indexTexto-1].padding(toLength: 113, withPad: " ", startingAt: 0)
-                    sendData(data: "\(Constants.ID)TG\(Constants.Grupo)\(index)\(codArticle)\(codigoTexto)\(texto)")
+                    if !sendData(data: "\(Constants.ID)TG\(Constants.Grupo)\(index)\(codArticle)\(codigoTexto)\(texto)") {
+                        res = false
+                    }
                 }
             }else{
-                sendData(data: "\(Constants.ID)TG\(Constants.Grupo)\(index)\(codArticle)01\(texto.padding(toLength: 113, withPad: " ", startingAt: 0))")
+                if  !sendData(data: "\(Constants.ID)TG\(Constants.Grupo)\(index)\(codArticle)01\(texto.padding(toLength: 113, withPad: " ", startingAt: 0))") {
+                    res = false
+                }
             }
         }
+        return res
     }
     
-    func startLabeling(article: Artigo) {
+    func startLabeling(article: Artigo) -> Bool {
         if let _ = Int(article.campos["Cod_Articulo"]!) {
-            register4A(article: article)
+           return register4A(article: article)
         }
+        return false
         
     }
     
-     func sendArticle(article: Artigo) {
+    func sendArticle(article: Artigo) -> Bool {
         if let _ = Int(article.campos["Cod_Articulo"]!) {
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.registerL2(article: article)
-                
-                self?.registerL3(article: article)
-                
-                self?.registerTA(article: article)
-                
-                self?.registerMG(article: article)
-                
-                self?.registerL4(article: article)
-                
-                self?.registerX4(article: article)
-                
-                self?.registerTG(article: article)
+            if registerL2(article: article) {
+                DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                    _ = self?.registerL3(article: article)
+                    
+                    _ = self?.registerTA(article: article)
+                    
+                    _ = self?.registerMG(article: article)
+                    
+                    _ = self?.registerL4(article: article)
+                    
+                    _ = self?.registerX4(article: article)
+                    
+                    _ = self?.registerTG(article: article)
+                }
+                return true
+            }else{
+                return false
             }
         }
+        return false
     }
 }
 

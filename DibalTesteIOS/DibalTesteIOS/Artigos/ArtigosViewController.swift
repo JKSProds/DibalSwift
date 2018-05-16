@@ -23,13 +23,14 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     var Firebase = FirebaseCom(clientID: "20lcz9utjo0NKE84twgd")
     var Dibal = DibalCom()
     static var UIColor = #colorLiteral(red: 0, green: 0.5898008943, blue: 1, alpha: 1)
+    
     private var splitViewDetailArticleViewController: DetalheArtigoViewController?{
         if let dvc = splitViewController?.viewControllers.last as? DetalheArtigoViewController {
             return dvc
             
         }else if let nvc = splitViewController?.viewControllers.last as? UINavigationController {
             return nvc.viewControllers.first as? DetalheArtigoViewController
-    
+            
         }
         return nil
         
@@ -67,30 +68,40 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         
+        setupSearchBar()
+        
+    }
+    
+    @objc func keyboardWillShow(_ notification:Notification) {
+        let userInfo:NSDictionary = (notification as NSNotification).userInfo! as NSDictionary
+        let keyboardFrame:NSValue = userInfo.value(forKey: UIKeyboardFrameEndUserInfoKey) as! NSValue
+        let keyboardRectangle = keyboardFrame.cgRectValue
+        let keyboardHeight = keyboardRectangle.height - 20
+        // controlBottomConstraint outlet to the control you want to move up
+        bottonConstraint.constant = keyboardHeight
+    }
+    
+    
+    func setupSearchBar() {
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Pesquisa"
-
+        
+        if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+            if let backgroundview = textfield.subviews.first {
+                backgroundview.backgroundColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+                backgroundview.layer.cornerRadius = 10
+                backgroundview.clipsToBounds = true
+            }
+        }
+        searchController.searchBar.delegate = self
+        navigationItem.hidesSearchBarWhenScrolling = true
         navigationItem.searchController = searchController
         definesPresentationContext = true
-        
         searchController.searchBar.scopeButtonTitles = ["Código", "Nome", "Preço"]
-        searchController.searchBar.delegate = self
-
         
-        //navigationItem.hidesSearchBarWhenScrolling = true
     }
-    
-    @objc func keyboardWillShow(_ notification:Notification) {
-    let userInfo:NSDictionary = (notification as NSNotification).userInfo! as NSDictionary
-    let keyboardFrame:NSValue = userInfo.value(forKey: UIKeyboardFrameEndUserInfoKey) as! NSValue
-    let keyboardRectangle = keyboardFrame.cgRectValue
-    let keyboardHeight = keyboardRectangle.height - 20
-    // controlBottomConstraint outlet to the control you want to move up
-    bottonConstraint.constant = keyboardHeight
-    }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "DetalheArtigoSegue" {
@@ -154,7 +165,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     dvc.savedArticle = true
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                     dvc.tableView.reloadData()
                     dvc.ErrorMessages = []
                 })
@@ -162,13 +173,13 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 alertController.addAction(OKAction)
                 
                 if let popoverController = alertController.popoverPresentationController {
-              
+                    
                     if Firebase.selectedArticle == -1 {
-                              popoverController.sourceView = self.view
+                        popoverController.sourceView = self.view
                         popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                           popoverController.permittedArrowDirections = []
+                        popoverController.permittedArrowDirections = []
                     }else{
-                         popoverController.sourceView = self.tableView
+                        popoverController.sourceView = self.tableView
                         popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
                     }
                 }
@@ -177,7 +188,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             }else{
                 self.Firebase.selectedArticle = -1
                 dvc.artigo = Artigo()
-                           dvc.loadHeader()
+                dvc.loadHeader()
                 dvc.tableView.reloadData()
                 dvc.ErrorMessages = []
             }
@@ -191,7 +202,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
                     dvc.tableView.reloadData()
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                     dvc.ErrorMessages = []
                     self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
                 })
@@ -200,7 +211,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
                     dvc.tableView.reloadData()
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                     dvc.ErrorMessages = []
                     self.navigationController?.pushViewController(dvc, animated: true)
                 })
@@ -213,7 +224,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     if Firebase.selectedArticle == -1 {
                         popoverController.sourceView = self.view
                         popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                          popoverController.permittedArrowDirections = []
+                        popoverController.permittedArrowDirections = []
                     }else{
                         popoverController.sourceView = self.tableView
                         popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
@@ -226,7 +237,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 self.Firebase.selectedArticle = -1
                 dvc.artigo = Artigo()
                 dvc.tableView.reloadData()
-                           dvc.loadHeader()
+                dvc.loadHeader()
                 dvc.ErrorMessages = []
                 navigationController?.pushViewController(dvc.navigationController!, animated: true)
             }
@@ -240,100 +251,39 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         
         if let dvc = splitViewDetailArticleViewController {
-           
-                if !dvc.savedArticle {
-                    let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
-                    let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
-                        dvc.saveArtigo(self)
-                        if self.isFiltering() {
-                            self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
-                        } else {
-                            self.Firebase.selectedArticle = indexPath.row
-                        }
-                        dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
-                        dvc.tableView.reloadData()
-                                   dvc.loadHeader()
-                        dvc.ErrorMessages = []
-                        
-                    })
-                    let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
-                        dvc.savedArticle = true
-                        self.Firebase.selectedArticle = indexPath.row
-                        dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
-                        dvc.tableView.reloadData()
-                                   dvc.loadHeader()
-                        dvc.ErrorMessages = []
-                    })
-                    alertController.addAction(CancelOption)
-                    alertController.addAction(OKAction)
-                    
-                    if let popoverController = alertController.popoverPresentationController {
-                        
-                        if Firebase.selectedArticle == -1 {
-                            popoverController.sourceView = self.view
-                            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                             popoverController.permittedArrowDirections = []
-                        }else{
-                            popoverController.sourceView = self.tableView
-                            popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
-                        }
-                    }
-                    
-                    self.present(alertController, animated: true, completion: nil)
-                }else{
-                    if self.isFiltering() {
-                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
-                    } else {
-                        self.Firebase.selectedArticle = indexPath.row
-                    }
-
-                    dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
-                    dvc.tableView.reloadData()
-                               dvc.loadHeader()
-                    dvc.ErrorMessages = []
-                }
-        }else if let dvc = lastSeguedToDetalhesViewController{
+            
             if !dvc.savedArticle {
                 let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
                 let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
                     dvc.saveArtigo(self)
-                    
                     if self.isFiltering() {
                         self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
                     } else {
                         self.Firebase.selectedArticle = indexPath.row
                     }
-
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                     dvc.ErrorMessages = []
-                    self.navigationController?.pushViewController(dvc, animated: true)
+                    
                 })
                 let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
                     dvc.savedArticle = true
-                    if self.isFiltering() {
-                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
-                    } else {
-                        self.Firebase.selectedArticle = indexPath.row
-                    }
-
+                    self.Firebase.selectedArticle = indexPath.row
                     dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                     dvc.tableView.reloadData()
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                     dvc.ErrorMessages = []
-                    self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
                 })
                 alertController.addAction(CancelOption)
                 alertController.addAction(OKAction)
-                
                 
                 if let popoverController = alertController.popoverPresentationController {
                     
                     if Firebase.selectedArticle == -1 {
                         popoverController.sourceView = self.view
                         popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                               popoverController.permittedArrowDirections = []
+                        popoverController.permittedArrowDirections = []
                     }else{
                         popoverController.sourceView = self.tableView
                         popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
@@ -347,10 +297,71 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 } else {
                     self.Firebase.selectedArticle = indexPath.row
                 }
-
+                
                 dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
                 dvc.tableView.reloadData()
-                           dvc.loadHeader()
+                dvc.loadHeader()
+                dvc.ErrorMessages = []
+            }
+        }else if let dvc = lastSeguedToDetalhesViewController{
+            if !dvc.savedArticle {
+                let alertController = UIAlertController(title: "Guardar Artigo", message: "Deseja guardar as alterações efetuadas ao artigo?", preferredStyle: .actionSheet)
+                let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
+                    dvc.saveArtigo(self)
+                    
+                    if self.isFiltering() {
+                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                    } else {
+                        self.Firebase.selectedArticle = indexPath.row
+                    }
+                    
+                    dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                    dvc.tableView.reloadData()
+                    dvc.loadHeader()
+                    dvc.ErrorMessages = []
+                    self.navigationController?.pushViewController(dvc, animated: true)
+                })
+                let CancelOption = UIAlertAction(title: "Não", style: .default, handler: { alert -> Void in
+                    dvc.savedArticle = true
+                    if self.isFiltering() {
+                        self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                    } else {
+                        self.Firebase.selectedArticle = indexPath.row
+                    }
+                    
+                    dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                    dvc.tableView.reloadData()
+                    dvc.loadHeader()
+                    dvc.ErrorMessages = []
+                    self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
+                })
+                alertController.addAction(CancelOption)
+                alertController.addAction(OKAction)
+                
+                
+                if let popoverController = alertController.popoverPresentationController {
+                    
+                    if Firebase.selectedArticle == -1 {
+                        popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                        popoverController.permittedArrowDirections = []
+                    }else{
+                        popoverController.sourceView = self.tableView
+                        popoverController.sourceRect = self.tableView.rectForRow(at: IndexPath(row: self.Firebase.selectedArticle, section: 0))
+                    }
+                }
+                
+                self.present(alertController, animated: true, completion: nil)
+            }else{
+                if self.isFiltering() {
+                    self.Firebase.selectedArticle = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                } else {
+                    self.Firebase.selectedArticle = indexPath.row
+                }
+                
+                dvc.artigo = self.Firebase.articles[self.Firebase.selectedArticle]
+                dvc.tableView.reloadData()
+                dvc.loadHeader()
                 dvc.ErrorMessages = []
                 self.navigationController?.pushViewController(dvc.navigationController!, animated: true)
             }
@@ -360,7 +371,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             } else {
                 self.Firebase.selectedArticle = indexPath.row
             }
-
+            
             self.performSegue(withIdentifier: "DetalheArtigoSegue", sender: self)
         }
         
@@ -412,7 +423,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
                     let sections = NSIndexSet(indexesIn: range)
                     dvc.tableView.reloadSections(sections as IndexSet, with: .automatic)
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                 }else if let dvc = self.lastSeguedToDetalhesViewController {
                     self.Firebase.selectedArticle = -1
                     dvc.artigo = Artigo()
@@ -420,9 +431,18 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     let range = NSMakeRange(0, self.tableView.numberOfSections)
                     let sections = NSIndexSet(indexesIn: range)
                     dvc.tableView.reloadSections(sections as IndexSet, with: .automatic)
-                               dvc.loadHeader()
+                    dvc.loadHeader()
                 }
-                self.Firebase.removeArticle(at: indexPath.row)
+                var index = -1
+                if self.isFiltering() {
+                    index = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                    self.filteredArticles.remove(at: indexPath.row)
+                    self.tableView.deleteRows(at: [indexPath], with: .bottom)
+                    
+                } else {
+                   index = indexPath.row
+                }
+                self.Firebase.removeArticle(at: index)
             })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
@@ -446,7 +466,21 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         let start = UIContextualAction(style: .normal, title: "Iniciar") { (action, view, nil) in
             let alertController = UIAlertController(title: "Iniciar Etiquetagem", message: "Tem a certeza que deseja iniciar a etiquetagem deste artigo?", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
-                self.Dibal.startLabeling(article: self.Firebase.articles[indexPath.row]) })
+                
+                var index = -1
+                if self.isFiltering() {
+                    index = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                } else {
+                    index = indexPath.row
+                }
+                
+                if self.Dibal.startLabeling(article: self.Firebase.articles[index]){
+                     self.lblFilter.text = "Artigo enviado com sucesso"
+                }else{
+                     self.lblFilter.text = "Ocorreu um erro ao enviar!"
+                }
+                self.lblFilter.fadeInAndOut()
+            })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
             alertController.addAction(OKAction)
@@ -460,14 +494,26 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
             tableView.setEditing(false, animated: true)
             
         }
-
+        
         start.image = #imageLiteral(resourceName: "play")
         start.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
         
         let send = UIContextualAction(style: .normal, title: "Enviar") { (action, view, nil) in
             let alertController = UIAlertController(title: "Enviar Artigo", message: "Tem a certeza que deseja enviar este artigo?", preferredStyle: .actionSheet)
             let OKAction = UIAlertAction(title: "Sim", style: .default, handler: { alert -> Void in
-                self.Dibal.sendArticle(article: self.Firebase.articles[indexPath.row]) })
+                var index = -1
+                if self.isFiltering() {
+                    index = self.getIndexByCodigo(codigo: self.filteredArticles[indexPath.row].campos["Cod_Articulo"]!)
+                } else {
+                    index = indexPath.row
+                }
+                if self.Dibal.sendArticle(article: self.Firebase.articles[index]) {
+                    self.lblFilter.text = "Artigo enviado com sucesso"
+                }else{
+                     self.lblFilter.text = "Ocorreu um erro ao enviar!"
+                }
+                self.lblFilter.fadeInAndOut()
+            })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
             alertController.addAction(OKAction)
@@ -518,7 +564,7 @@ extension ArtigosViewController: UISearchResultsUpdating, UISearchBarDelegate {
                 return (article.campos["Precio"]?.lowercased().contains(searchText.lowercased()))!
             })
         }
-      
+        
         tableView.reloadData()
     }
     
@@ -543,20 +589,24 @@ extension ArtigosViewController: UISearchResultsUpdating, UISearchBarDelegate {
     func setIsFilteringToShow(filteredItemCount: Int, of: Int) {
         lblFilter.fadeIn(duration: 0.35, delay: 0, completion:{_ in })
         if filteredItemCount > 0 {
-        lblFilter.text = "A Filtrar \(filteredItemCount) de \(of)"
+            lblFilter.text = "A Filtrar \(filteredItemCount) de \(of)"
         }else{
             lblFilter.text = "Nenhum artigo encontrado!"
         }
     }
     
     func setNotFiltering() {
-      lblFilter.fadeOut(duration: 0.35, delay: 0, completion: {_ in})
+        lblFilter.fadeOut(duration: 0.35, delay: 0, completion: {_ in})
     }
 }
 
 
 extension UIView {
     
+    func fadeInAndOut() {
+        fadeIn()
+        fadeOut()
+    }
     
     func fadeIn(duration: TimeInterval = 1.0, delay: TimeInterval = 0.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {

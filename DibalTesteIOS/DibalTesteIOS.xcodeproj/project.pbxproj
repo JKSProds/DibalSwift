@@ -45,7 +45,7 @@
 		E77B26F82093D588004D3E68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E77B26FA2093D588004D3E68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E77B27002093D5B8004D3E68 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArtigosSplitterViewController.swift; path = DibalTesteIOS/Controller/ArtigosSplitterViewController.swift; sourceTree = SOURCE_ROOT; };
+		E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArtigosSplitterViewController.swift; path = DibalTesteIOS/Artigos/ArtigosSplitterViewController.swift; sourceTree = SOURCE_ROOT; };
 		E79F800A209677F30024D7B0 /* DetalheArtigoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetalheArtigoViewController.swift; sourceTree = "<group>"; };
 		E7ADCAFC2099197300170AD1 /* Artigo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artigo.swift; sourceTree = "<group>"; };
 		E7C7D26D209DB68300ECA3EC /* ExpandableHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableHeaders.swift; sourceTree = "<group>"; };
@@ -84,11 +84,8 @@
 		E7455E9A209C6D0B00AFF9E5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				E7ADCAFC2099197300170AD1 /* Artigo.swift */,
 				E7455E9E209C6E3600AFF9E5 /* FirebaseCom.swift */,
 				E7455EA0209C6E4100AFF9E5 /* DibalCom.swift */,
-				E7455EA3209C762900AFF9E5 /* Field.swift */,
-				E7C7D26D209DB68300ECA3EC /* ExpandableHeaders.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -96,18 +93,12 @@
 		E7455E9C209C6D1C00AFF9E5 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				E77B26F02093D588004D3E68 /* ArtigosViewController.swift */,
 				E7021DC5209BBA570091603C /* ConfigViewController.swift */,
-				E79F800A209677F30024D7B0 /* DetalheArtigoViewController.swift */,
-				E76F88882095D16500B58566 /* ListaArtigosTableViewCell.swift */,
-				E7474BF520A066FC002070ED /* pickerFieldsView.swift */,
-				E7474BF720A1EED5002070ED /* DetalhesArtigosTableViewCell.swift */,
-				E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
 		};
-		E7455E9D209C6D4300AFF9E5 /* Other */ = {
+		E7455E9D209C6D4300AFF9E5 /* Suportting Files */ = {
 			isa = PBXGroup;
 			children = (
 				E77B26F22093D588004D3E68 /* Main.storyboard */,
@@ -115,7 +106,7 @@
 				E77B26F72093D588004D3E68 /* LaunchScreen.storyboard */,
 				E77B27002093D5B8004D3E68 /* GoogleService-Info.plist */,
 			);
-			path = Other;
+			path = "Suportting Files";
 			sourceTree = "<group>";
 		};
 		E77B26E22093D588004D3E68 = {
@@ -139,13 +130,46 @@
 		E77B26ED2093D588004D3E68 /* DibalTesteIOS */ = {
 			isa = PBXGroup;
 			children = (
-				E7455E9D209C6D4300AFF9E5 /* Other */,
+				E79B83B920AB7BF600E316AF /* Artigos */,
 				E7455E9C209C6D1C00AFF9E5 /* Controller */,
 				E7455E9A209C6D0B00AFF9E5 /* Model */,
 				E77B26FA2093D588004D3E68 /* Info.plist */,
 				E77B26EE2093D588004D3E68 /* AppDelegate.swift */,
+				E7455E9D209C6D4300AFF9E5 /* Suportting Files */,
 			);
 			path = DibalTesteIOS;
+			sourceTree = "<group>";
+		};
+		E79B83B920AB7BF600E316AF /* Artigos */ = {
+			isa = PBXGroup;
+			children = (
+				E79B83BC20AB7C3D00E316AF /* Model */,
+				E79B83BB20AB7C3000E316AF /* Controller */,
+			);
+			path = Artigos;
+			sourceTree = "<group>";
+		};
+		E79B83BB20AB7C3000E316AF /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				E77B26F02093D588004D3E68 /* ArtigosViewController.swift */,
+				E79F800A209677F30024D7B0 /* DetalheArtigoViewController.swift */,
+				E76F88882095D16500B58566 /* ListaArtigosTableViewCell.swift */,
+				E7474BF520A066FC002070ED /* pickerFieldsView.swift */,
+				E7474BF720A1EED5002070ED /* DetalhesArtigosTableViewCell.swift */,
+				E789D8A920A4A7C50054D7D8 /* ArtigosSplitterViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		E79B83BC20AB7C3D00E316AF /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E7ADCAFC2099197300170AD1 /* Artigo.swift */,
+				E7455EA3209C762900AFF9E5 /* Field.swift */,
+				E7C7D26D209DB68300ECA3EC /* ExpandableHeaders.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

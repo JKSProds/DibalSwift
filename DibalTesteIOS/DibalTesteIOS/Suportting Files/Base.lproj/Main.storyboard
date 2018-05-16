@@ -150,7 +150,7 @@
                                 </prototypes>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9g4-1n-3NA">
-                                <rect key="frame" x="8" y="613" width="398" height="58"/>
+                                <rect key="frame" x="8" y="613" width="390" height="58"/>
                                 <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="58" id="h6z-gQ-78N"/>
@@ -182,7 +182,7 @@
                             <constraint firstItem="vCM-GA-TnM" firstAttribute="bottom" secondItem="fdg-Cb-UxB" secondAttribute="bottom" constant="16" id="ZOJ-eG-mzH"/>
                             <constraint firstItem="9g4-1n-3NA" firstAttribute="leading" secondItem="vCM-GA-TnM" secondAttribute="leading" constant="8" id="Zpl-Bd-pJz"/>
                             <constraint firstItem="fdg-Cb-UxB" firstAttribute="top" secondItem="Min-EG-CG1" secondAttribute="bottom" constant="-74" id="haV-wf-Tyi"/>
-                            <constraint firstItem="vCM-GA-TnM" firstAttribute="trailing" secondItem="9g4-1n-3NA" secondAttribute="trailing" constant="8" id="k2M-1h-bMk"/>
+                            <constraint firstItem="vCM-GA-TnM" firstAttribute="trailing" secondItem="9g4-1n-3NA" secondAttribute="trailing" constant="16" id="k2M-1h-bMk"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="vCM-GA-TnM"/>
                     </view>
