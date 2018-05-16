@@ -13,9 +13,9 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var lblHeader: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var NovoArtigoButton: UIButton!
-    @IBOutlet weak var lblFilter: UILabel!
+    @IBOutlet weak var lblBottomNotification: UILabel!
     
-    @IBOutlet weak var bottonConstraint: NSLayoutConstraint!
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     
     let searchController = UISearchController(searchResultsController: nil)
     var filteredArticles = [Artigo]()
@@ -56,8 +56,8 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         //UI Changes
         NovoArtigoButton.layer.cornerRadius = NovoArtigoButton.layer.frame.height / 2
-        lblFilter.layer.masksToBounds = true
-        lblFilter.layer.cornerRadius = lblFilter.layer.frame.height / 2
+        lblBottomNotification.layer.masksToBounds = true
+        lblBottomNotification.layer.cornerRadius = lblBottomNotification.layer.frame.height / 2
         //NovoArtigoButton.backgroundColor = ArtigosViewController.UIColor
         
         if let detail = splitViewDetailArticleViewController {
@@ -67,6 +67,7 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         setupSearchBar()
         
@@ -78,10 +79,12 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
         let keyboardRectangle = keyboardFrame.cgRectValue
         let keyboardHeight = keyboardRectangle.height - 20
         // controlBottomConstraint outlet to the control you want to move up
-        bottonConstraint.constant = keyboardHeight
+        bottomConstraint.constant = keyboardHeight
     }
     
-    
+    @objc func keyboardWillHide(_ notification:Notification) {
+     bottomConstraint.constant = 16
+    }
     func setupSearchBar() {
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
@@ -475,11 +478,11 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                 }
                 
                 if self.Dibal.startLabeling(article: self.Firebase.articles[index]){
-                     self.lblFilter.text = "Artigo enviado com sucesso"
+                     self.lblBottomNotification.text = "Artigo enviado com sucesso"
                 }else{
-                     self.lblFilter.text = "Ocorreu um erro ao enviar!"
+                     self.lblBottomNotification.text = "Ocorreu um erro ao enviar!"
                 }
-                self.lblFilter.fadeInAndOut()
+                self.lblBottomNotification.fadeInAndOut()
             })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
@@ -508,11 +511,11 @@ class ArtigosViewController: UIViewController, UITableViewDelegate, UITableViewD
                     index = indexPath.row
                 }
                 if self.Dibal.sendArticle(article: self.Firebase.articles[index]) {
-                    self.lblFilter.text = "Artigo enviado com sucesso"
+                    self.lblBottomNotification.text = "Artigo enviado com sucesso"
                 }else{
-                     self.lblFilter.text = "Ocorreu um erro ao enviar!"
+                     self.lblBottomNotification.text = "Ocorreu um erro ao enviar!"
                 }
-                self.lblFilter.fadeInAndOut()
+                self.lblBottomNotification.fadeInAndOut()
             })
             let CancelOption = UIAlertAction(title: "Cancelar", style: .default, handler: nil)
             alertController.addAction(CancelOption)
@@ -587,16 +590,16 @@ extension ArtigosViewController: UISearchResultsUpdating, UISearchBarDelegate {
     }
     
     func setIsFilteringToShow(filteredItemCount: Int, of: Int) {
-        lblFilter.fadeIn(duration: 0.35, delay: 0, completion:{_ in })
+        lblBottomNotification.fadeIn(duration: 0.35, delay: 0, completion:{_ in })
         if filteredItemCount > 0 {
-            lblFilter.text = "A Filtrar \(filteredItemCount) de \(of)"
+            lblBottomNotification.text = "A Filtrar \(filteredItemCount) de \(of)"
         }else{
-            lblFilter.text = "Nenhum artigo encontrado!"
+            lblBottomNotification.text = "Nenhum artigo encontrado!"
         }
     }
     
     func setNotFiltering() {
-        lblFilter.fadeOut(duration: 0.35, delay: 0, completion: {_ in})
+        lblBottomNotification.fadeOut(duration: 0.35, delay: 0, completion: {_ in})
     }
 }
 

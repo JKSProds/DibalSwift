@@ -189,8 +189,8 @@
                     <navigationItem key="navigationItem" title="CLIENT_NAME" id="rwo-Xg-2xM"/>
                     <connections>
                         <outlet property="NovoArtigoButton" destination="fdg-Cb-UxB" id="koN-0v-aCA"/>
-                        <outlet property="bottonConstraint" destination="Wzb-JN-xiS" id="yhA-Ce-PaK"/>
-                        <outlet property="lblFilter" destination="9g4-1n-3NA" id="xVU-5L-OJ4"/>
+                        <outlet property="bottomConstraint" destination="Wzb-JN-xiS" id="yhA-Ce-PaK"/>
+                        <outlet property="lblBottomNotification" destination="9g4-1n-3NA" id="xVU-5L-OJ4"/>
                         <outlet property="lblHeader" destination="rwo-Xg-2xM" id="J2w-0D-2ff"/>
                         <outlet property="tableView" destination="Min-EG-CG1" id="1ya-gG-fJr"/>
                         <segue destination="rh7-6r-Ywd" kind="showDetail" identifier="DetalheArtigoSegue" id="i2B-pY-Gdf"/>
