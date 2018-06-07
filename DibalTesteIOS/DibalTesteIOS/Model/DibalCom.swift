@@ -15,12 +15,12 @@ class DibalCom {
     
     init() {
         IP_Adress = "192.168.1.4"
-        TX_Port = 3001
+        TX_Port = 3000
     }
     
     private func sendData(data: String) -> Bool {
         let client = TCPClient(address: IP_Adress, port: TX_Port)
-        switch client.connect(timeout: 1) {
+        switch client.connect(timeout: 5) {
         case .success:
             switch client.send(string: data) {
             case .success:
@@ -30,16 +30,16 @@ class DibalCom {
                 if let response = String(bytes: data, encoding: .utf8) {
                     print(response)
                 }
-                client.close()
+                //client.close()
                 return true
             case .failure(let error):
                 print(error)
-                client.close()
+                //client.close()
                 return false
             }
         case .failure(let error):
             print(error)
-            client.close()
+            //client.close()
             return false
         }
     }
@@ -285,15 +285,15 @@ class DibalCom {
             if registerL2(article: article) {
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     _ = self?.registerL3(article: article)
-                    
+
                     _ = self?.registerTA(article: article)
-                    
+
                     _ = self?.registerMG(article: article)
-                    
+
                     _ = self?.registerL4(article: article)
-                    
+
                     _ = self?.registerX4(article: article)
-                    
+
                     _ = self?.registerTG(article: article)
                 }
                 return true
@@ -302,6 +302,24 @@ class DibalCom {
             }
         }
         return false
+        
+//        let registos: [String] = [
+//        "00L250M000001-01teste                                                                   000000000000000000000000",
+//        "00CW500000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//        "00H45000000100308                        09                        10                        11                                   ",
+//        "00X45000000101\u{1B}                                                                                                                   ",
+//        "00NR500000010030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//        "00NR500000010060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//        "00NR500000010090000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//        "00NR500000010110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//        "00NR500000010140000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//        "00SA50000000                                                                                                                      "
+//        ]
+        
+//        for registo in registos {
+//            _ = sendData(data: registo)
+//        }
+//        return true
     }
 }
 
@@ -366,6 +384,17 @@ extension String {
     
 }
 
+extension Data {
+    
+    var utf8String: String? {
+        return string(as: .utf8)
+    }
+    
+    func string(as encoding: String.Encoding) -> String? {
+        return String(data: self, encoding: encoding)
+    }
+    
+}
 
 
 
